@@ -1,0 +1,7 @@
+export const ROUTE_HOME = '/'
+export const ROUTE_AUTH_SIGN_IN = '/signin'
+export const ROUTE_AUTH_REGISTRATION = '/registration'
+export const ROUTE_AUTH_FORGOT = '/forgot'
+export const ROUTE_MODULE = '/module'
+export const ROUTE_PROJECT = '/project'
+export const ROUTE_PROJECT_STEP = '/project/step'
