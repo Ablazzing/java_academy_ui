@@ -8,7 +8,7 @@ const PageAuthForgot = () => {
         <NavLink to="/" className="logo">
           <img src={ getAssetsPath('img/logo_auth.svg') } alt="" />
         </NavLink>
-        <div className="title">Забыли пароль?</div>
+        <div className="pagetitle"><h1>Забыли пароль?</h1></div>
         <div className="desc">Мы пришлем на почту инструкцию для восстановления пароля</div>
         <fieldset>
           <input type="text" placeholder="Ваш email" />

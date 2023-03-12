@@ -1,22 +1,14 @@
 import { useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { Collapse } from 'react-collapse'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { svgData, svgDataMobile } from '@/data'
 import Icon from '../components/Icon'
 import Teacher from '../components/Teacher'
 
 const PageHome = () => {
-  const refTab = useRef(null)
-  const [tab, setTab] = useState({
-    active: '',
-    height: '0',
-  })
-  const toggleTab = () => {
-    setTab({
-      active: !tab.active ? 'active' : '',
-      height: !tab.active ? `${refTab.current.scrollHeight}px` : 0
-    })
-  }
+  const [collapse, setCollapse] = useState(false)
+  const toggleCollapse = () => setCollapse(!collapse)
   const refSvgBox = useRef(null)
   let lastEl = 0
   svgData.map(e => {
@@ -34,37 +26,38 @@ const PageHome = () => {
       refSvgBox.current.append(last)
     }
   }, 1)
+  document.title = 'Home'
   return (
     <main className="container wrap home">
       <div className="pagetitle">
         <h1>Мой путь</h1>
-        <button className='btn' type="button">Открыть все курсы за 50%</button>
+        <button className="btn" type="button">Открыть все курсы за 50%</button>
       </div>
       <div className="tab">
-        <button onClick={ toggleTab } className={tab.active ? 'active mobile' : 'mobile'} type="button">
-          <span>Курсы</span>
+        <PerfectScrollbar className="svgbox">
+          <div ref={ refSvgBox } className="box">
+          {svgData.map((e, i) => {
+            return <div style={ e.styles.position } key={ i } className="item">
+                    <div style={ e.styles.main.outer } className="main">
+                      <span style={ e.styles.main.inner }>{ e.main.label }</span>
+                      { e.main.icon }
+                    </div>
+                    {e.progress && <div className="progress" style={ e.styles.progress.outer }>
+                      <span style={ e.styles.progress.inner }>{ e.progress.label }</span>
+                      { e.progress.icon }
+                    </div>}
+                    {e.arrows && e.arrows.map((arrow, id) => {
+                      return arrow
+                    })}
+                  </div>
+          })}
+          </div>
+        </PerfectScrollbar>
+        <button onClick={ toggleCollapse } className={ collapse ? 'active boxshadow' : 'boxshadow' } type="button">
+          <span className="h1">Курсы</span>
           <Icon name="arrow" />
         </button>
-        <div style={{ maxHeight: `${tab.height}` }} ref={ refTab } className="tabcontent">
-          <PerfectScrollbar className="svgbox">
-            <div ref={ refSvgBox } className="box">
-            {svgData.map((e, i) => {
-              return <div style={ e.styles.position } key={ i } className="item">
-                      <div style={ e.styles.main.outer } className="main">
-                        <span style={ e.styles.main.inner }>{ e.main.label }</span>
-                        { e.main.icon }
-                      </div>
-                      {e.progress && <div className="progress" style={ e.styles.progress.outer }>
-                        <span style={ e.styles.progress.inner }>{ e.progress.label }</span>
-                        { e.progress.icon }
-                      </div>}
-                      {e.arrows && e.arrows.map((arrow, id) => {
-                        return arrow
-                      })}
-                    </div>
-            })}
-            </div>
-          </PerfectScrollbar>
+        <Collapse isOpened={ collapse }>
           <div className="mobiledata">
             <button className='btn' type="button">Открыть все курсы за 50%</button>
             <ul>
@@ -77,33 +70,33 @@ const PageHome = () => {
             })}
             </ul>
           </div>
-        </div>
+        </Collapse>
       </div>
-      <div className={tab.active ? 'np infobox' : 'infobox'}>
-        <div className="main">
-          <div className="boxtitle">Проекты</div>
+      <div className="flexcontent">
+        <div className="main boxshadow">
+          <div className="h1">Проекты</div>
           <ul className="item">
             <li><NavLink to="/"><strong>SQL</strong></NavLink></li>
             <li><NavLink to="/">Проект Университет</NavLink></li>
-            <li><span className="label green">Принят</span></li>
+            <li><span className="badge green">Принят</span></li>
           </ul>
           <ul className="item">
             <li><NavLink to="/"><strong>java core</strong></NavLink></li>
             <li><NavLink to="/">Проект Toyoya</NavLink></li>
             <li><NavLink to="/">Этап 2</NavLink></li>
-            <li><span className="label orange">В работе</span></li>
+            <li><span className="badge orange">В работе</span></li>
           </ul>
-          <div className="boxtitle">Модули</div>
+          <div className="h1">Модули</div>
           <ul className="item">
             <li><NavLink to="/"><strong>Типы данных в java</strong></NavLink></li>
             <li>
-              <span className="progress">
+              <span className="progressbar orange">
                 <span><span style={{ width: '50%' }}></span></span>
                 <span>50%</span>
               </span>
             </li>
           </ul>
-          <div className="boxtitle">Последние лекции</div>
+          <div className="h1">Последние лекции</div>
           <ul className="item block">
             <li className='padding nlp'><NavLink to="/"><strong>Типы данных в java</strong></NavLink></li>
             <li className='flex padding'>

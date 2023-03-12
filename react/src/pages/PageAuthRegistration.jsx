@@ -8,7 +8,7 @@ const PageAuthRegistration = () => {
         <NavLink to="/" className="logo">
           <img src={ getAssetsPath('img/logo_auth.svg') } alt="" />
         </NavLink>
-        <div className="title">Регистрация</div>
+        <div className="pagetitle"><h1>Регистрация</h1></div>
         <fieldset>
           <input type="text" placeholder="Ваш email" />
         </fieldset>

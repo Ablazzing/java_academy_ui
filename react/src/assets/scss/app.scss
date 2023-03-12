@@ -1,6 +1,7 @@
 @import "../../../node_modules/normalize.css/normalize";
 @import 'vars';
 @import 'base';
+@import 'components';
 @import 'header';
 @import 'footer';
 @import 'pages/auth';
@@ -8,3 +9,7 @@
 @import 'pages/project';
 @import 'pages/step';
 @import 'pages/module';
+@import 'pages/lection';
+@import 'pages/test';
+@import 'pages/notify';
+@import 'pages/profile';

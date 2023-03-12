@@ -6,6 +6,10 @@ import PageAuthForgot from '../pages/PageAuthForgot'
 import PageModule from '../pages/PageModule'
 import PageProject from '../pages/PageProject'
 import PageStep from '../pages/PageStep'
+import PageLection from '../pages/PageLection'
+import PageTest from '../pages/PageTest'
+import PageNotify from '../pages/PageNotify'
+import PageProfile from '../pages/PageProfile'
 
 export const privateRoutes = [{
   Path: RouterConstants.ROUTE_HOME,
@@ -19,6 +23,18 @@ export const privateRoutes = [{
 }, {
   Path: RouterConstants.ROUTE_PROJECT_STEP,
   Component: PageStep
+}, {
+  Path: RouterConstants.ROUTE_LECTION,
+  Component: PageLection
+}, {
+  Path: RouterConstants.ROUTE_TEST,
+  Component: PageTest
+}, {
+  Path: RouterConstants.ROUTE_NOTIFY,
+  Component: PageNotify
+}, {
+  Path: RouterConstants.ROUTE_PROFILE,
+  Component: PageProfile
 }]
 
 export const authRoutes = [{

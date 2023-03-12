@@ -1,7 +1,7 @@
-const Icon = (props) => {
+const Icon = ({ name, style }) => {
   return (
-    <svg className={ props.name } style={ props.style } aria-hidden="true">
-      <use href={ '#icon-' + props.name } />
+    <svg className={ name } style={ style } aria-hidden="true">
+      <use href={ '#icon-' + name } />
     </svg>
   )
 }

@@ -1,7 +1,7 @@
-import { useRef, useState } from "react"
-import { NavLink } from "react-router-dom"
+import { useRef, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import { getAssetsPath } from '../utils'
-import Icon from "./Icon"
+import Icon from './Icon'
 
 const Header = () => {
   const refModal = useRef()
@@ -35,13 +35,13 @@ const Header = () => {
           <li>
             <button onClick={ toggleModal } type="button">
               <span className="label">Корзина</span>
-              <span className="badge">1</span>
+              <span className="badge red">1</span>
             </button>
           </li>
           <li>
             <button type="button">
               <span className="label">Уведомления</span>
-              <span className="badge">2</span>
+              <span className="badge red">2</span>
             </button>
           </li>
           <li>

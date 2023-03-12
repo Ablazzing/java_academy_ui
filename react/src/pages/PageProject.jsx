@@ -1,21 +1,20 @@
 import { NavLink } from 'react-router-dom'
+import TopBar from '../components/TopBar'
 import Teacher from '../components/Teacher'
 import Icon from '../components/Icon'
 
 const PageProject = () => {
+  document.title = 'Project'
   return (
     <main className="container wrap project">
-      <NavLink to="/" className="back">
-        <Icon name="arrow" />
-        <span>Назад</span>
-      </NavLink>
-      <div className="content">
-        <div className="main">
+      <TopBar back="Назад" />
+      <div className="flexcontent">
+        <div className="main boxshadow">
           <div className="pagetitle">
-            <span>Проект Тоyota</span>
-            <span className="label orange">В работе</span>
+            <h1>Проект Тоyota</h1>
+            <span className="badge orange">В работе</span>
           </div>
-          <div className="pagedesc">
+          <div className="subtitle">
             <span>Модуль</span>
             <NavLink to="/">SQL</NavLink>
           </div>

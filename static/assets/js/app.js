@@ -1,8 +1,8 @@
 window.onload = () => {
   // App height
   const setAppHeight = () => {
-    document.documentElement.style.setProperty('--app-width', window.outerWidth + 'px')
-    document.documentElement.style.setProperty('--app-height', window.outerHeight + 'px')
+    document.documentElement.style.setProperty('--app-width', window.innerWidth + 'px')
+    document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px')
   }
   setAppHeight()
   window.addEventListener('resize', () => setAppHeight())

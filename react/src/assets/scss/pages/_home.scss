@@ -1,22 +1,11 @@
 main.container.home{
-  padding-bottom: 50px;
-  background: var(--color-gray-lightest);
-  @media screen and (max-width: 768px) {
-    padding-bottom: 24px;
-  }
   .pagetitle{
-    position: relative;
     padding: 54px 0 0;
     @media screen and (max-width: 768px) {
       display: none;
     }
     h1{
-      font-size: 24px;
-      font-weight: 600;
-      line-height: 24px;
-      color: var(--color-black);
       text-align: center;
-      letter-spacing: -0.02em;
     }
     button{
       position: absolute;
@@ -34,18 +23,80 @@ main.container.home{
     @media screen and (max-width: 700px) {
       padding: 10px 0 0;
     }
-    button.mobile{
+    .svgbox{
+      width: calc(100% + 40px);
+      margin: 60px 0 0 -20px;
+      @media screen and (max-width: 768px) {
+        display: none;
+      }
+      .box{
+        position: relative;
+        height: 700px;
+        margin: 0 20px;
+        .item{
+          position: absolute;
+          &:first-child{
+            height: 39px;
+          }
+          .main,
+          .progress{
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            border-radius: 5px;
+            background: var(--color-white);
+            span{
+              display: block;
+              font-size: 16px;
+              line-height: 19px;
+              text-align: center;
+            }
+          }
+          .main{
+            z-index: 2;
+          }
+          .progress{
+            z-index: 1;
+          }
+        }
+        .last_item{
+          position: absolute;
+          top: 0;
+          width: 40px;
+          height: 100%;
+        }
+      }
+      .ps__rail{
+        &-x{
+          height: 6px;
+          padding: 0 20px;
+          background: var(--color-gray-light);
+          opacity: 1;
+          .ps__thumb-x{
+            top: 0;
+            bottom: auto;
+            height: 100%;
+            border-radius: 0;
+            background: var(--color-gray-middle);
+            opacity: 1;
+            cursor: pointer;
+          }
+        }
+        &-y{
+          display: none;
+        }
+      }
+    }
+    button.boxshadow{
       position: relative;
       display: none;
       justify-content: flex-start;
-      width: 100%;
-      padding: 20px 18px;
-      border-radius: 10px;
-      background: var(--color-white);
-      box-shadow: 4px 4px 15px var(--color-gray-shadow);
       transition: all .35s ease;
       @media screen and (max-width: 768px) {
         display: flex;
+        margin: 0;
       }
       @media screen and (max-width: 700px) {
         padding: 18px;
@@ -66,7 +117,6 @@ main.container.home{
         position: absolute;
         top: 50%;
         right: 20px;
-        display: block;
         width: 14px;
         height: 14px;
         margin: -7px 0 0;
@@ -74,86 +124,19 @@ main.container.home{
         transition: all .35s ease;
       }
     }
-    .tabcontent{
-      min-height: 700px;
-      overflow: hidden;
-      transition: max-height .35s ease;
+    .ReactCollapse--collapse{
       @media screen and (max-width: 768px) {
         width: calc(100% + 40px);
         min-height: auto;
         margin: 0 0 0 -20px;
+        padding-bottom: 0;
+        &[aria-hidden="false"]{
+          margin-bottom: -10px;
+        }
       }
       @media screen and (max-width: 700px) {
         width: calc(100% + 20px);
         margin: 0 0 0 -10px;
-      }
-      .svgbox{
-        width: calc(100% + 40px);
-        margin: 60px 0 0 -20px;
-        @media screen and (max-width: 768px) {
-          display: none;
-        }
-        .box{
-          position: relative;
-          height: 700px;
-          margin: 0 20px;
-          .item{
-            position: absolute;
-            &:first-child{
-              height: 39px;
-            }
-            .main,
-            .progress{
-              position: relative;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              width: 100%;
-              border-radius: 5px;
-              background: var(--color-white);
-              span{
-                display: block;
-                font-size: 16px;
-                line-height: 19px;
-                text-align: center;
-              }
-              svg{
-                display: block;
-              }
-            }
-            .main{
-              z-index: 2;
-            }
-            .progress{
-              z-index: 1;
-            }
-          }
-          .last_item{
-            position: absolute;
-            top: 0;
-            width: 20px;
-            height: 100%;
-          }
-        }
-        .ps__rail{
-          &-x{
-            height: 6px;
-            background: var(--color-gray-light);
-            opacity: 1;
-            .ps__thumb-x{
-              top: 0;
-              bottom: auto;
-              height: 100%;
-              border-radius: 0;
-              background: var(--color-gray-middle);
-              opacity: 1;
-              cursor: pointer;
-            }
-          }
-          &-y{
-            display: none;
-          }
-        }
       }
       .mobiledata{
         position: relative;
@@ -216,7 +199,6 @@ main.container.home{
               position: absolute;
               top: 12px;
               right: 0;
-              display: block;
               width: 18px;
               height: 18px;
               color: var(--color-green);
@@ -226,57 +208,19 @@ main.container.home{
       }
     }
   }
-  .infobox{
-    display: flex;
-    align-items: flex-start;
+  .flexcontent{
     padding: 52px 0 0;
     @media screen and (max-width: 768px) {
-      flex-direction: column-reverse;
       padding: 20px 0 0;
-      transition: padding .35s ease;
-      &.np{
-        padding: 0;
-      }
     }
     @media screen and (max-width: 700px) {
       padding: 14px 0 0;
     }
-    .main,
-    .teacher{
-      border-radius: 10px;
-      background: var(--color-white);
-      box-shadow: 4px 4px 15px var(--color-gray-shadow);
-    }
     .main{
-      flex: 1 1 auto;
-      padding: 38px 40px;
-      @media screen and (max-width: 920px) {
-        padding: 30px 20px;
-      }
-      @media screen and (max-width: 768px) {
-        width: 100%;
-        margin: 20px 0 0;
-        padding: 20px 18px;
-      }
-      @media screen and (max-width: 700px) {
-        margin: 14px 0 0;
-        padding: 18px;
-      }
-      .boxtitle{
+      .h1{
         padding: 60px 0 0;
-        font-size: 24px;
-        font-weight: 600;
-        line-height: 29px;
-        letter-spacing: -0.02em;
         @media screen and (max-width: 920px) {
           padding: 40px 0 0;
-          font-size: 20px;
-          line-height: 24px;
-          letter-spacing: 0;
-        }
-        @media screen and (max-width: 768px) {
-          font-size: 18px;
-          line-height: 18px;
         }
         &:first-child{
           padding: 0;
@@ -347,68 +291,15 @@ main.container.home{
               font-size: 14px;
             }
           }
-          span{
+          span.access{
             display: block;
-            &.label{
-              display: inline-block;
-              padding: 6px;
-              border-radius: 5px;
-              font-size: 12px;
-              line-height: 12px;
-              color: var(--color-white);
-              text-transform: uppercase;
-              @media screen and (max-width: 480px) {
-                margin: 4px 0 0;
-              }
-              &.green{
-                background: var(--color-green);
-              }
-              &.orange{
-                background: var(--color-orange);
-              }
-            }
-            &.progress{
-              display: flex;
-              align-items: center;
-              height: 18px;
-              margin: 0 0 2px;
-              @media screen and (max-width: 480px) {
-                margin: 10px 0 0;
-              }
-              span{
-                &:first-child{
-                  position: relative;
-                  width: 110px;
-                  height: 100%;
-                  border-radius: 5px;
-                  background: var(--color-gray-progress);
-                  overflow: hidden;
-                  span{
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 100%;
-                    background: var(--color-orange);
-                  }
-                }
-                &:last-child{
-                  padding: 0 0 0 12px;
-                  font-size: 16px;
-                  font-weight: 700;
-                }
-              }
-            }
-            &.access{
-              color: var(--color-gray-middle);
-            }
+            color: var(--color-gray-middle);
+          }
+          span.progressbar{
+            margin: 0 0 2px;
           }
           svg{
-            display: block;
-            max-width: 24px;
-            min-width: 24px;
-            height: 24px;
             margin: 0 0 0 10px;
-            color: var(--color-green);
           }
         }
       }

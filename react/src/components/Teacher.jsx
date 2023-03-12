@@ -3,7 +3,7 @@ import Icon from '../components/Icon'
 
 const Teacher = () => {
   return (
-    <div className="teacher">
+    <div className="teacher boxshadow">
       <div className="boxtitle">Мой куратор</div>
       <div className="desc">
         <span>В любой непонятной ситуации - пиши</span>
