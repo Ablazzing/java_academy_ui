@@ -21,9 +21,11 @@ const RouterApp = () => {
 					<Route path={ Path } element={ <Component /> } key={ Path } exact />
 				)}
 			</Route>
-			<Route path="*" element={<Navigate to={ isAuth ? RouterConstants.ROUTE_HOME : RouterConstants.ROUTE_AUTH_SIGN_IN } replace />} />
+			
 		</Routes>
 	)
 }
 
 export default RouterApp
+
+// <Route path="*" element={<Navigate to={ isAuth ? RouterConstants.ROUTE_HOME : RouterConstants.ROUTE_AUTH_SIGN_IN } replace />} />

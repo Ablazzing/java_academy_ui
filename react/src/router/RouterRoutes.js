@@ -35,9 +35,7 @@ export const privateRoutes = [{
 }, {
   Path: RouterConstants.ROUTE_PROFILE,
   Component: PageProfile
-}]
-
-export const authRoutes = [{
+}, {
   Path: RouterConstants.ROUTE_AUTH_SIGN_IN,
   Component: PageAuthSignin
 }, {
@@ -47,3 +45,5 @@ export const authRoutes = [{
   Path: RouterConstants.ROUTE_AUTH_FORGOT,
   Component: PageAuthForgot
 }]
+
+export const authRoutes = []

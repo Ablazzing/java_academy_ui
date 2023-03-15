@@ -7,12 +7,12 @@ main.container.lection{
     width: 100%;
     .swiper{
       height: 540px;
-      margin: 86px 90px 40px;
+      margin: 50px 90px 40px;
       border-radius: 10px;
       background: var(--color-gray-middle);
       overflow: hidden;
       @media screen and (max-width: 1400px) {
-        margin: 86px 80px 40px;
+        margin: 50px 80px 40px;
       }
       @media screen and (max-width: 920px) {
         height: 410px;
