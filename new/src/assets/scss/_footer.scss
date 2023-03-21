@@ -1,0 +1,265 @@
+footer{
+  &.index{
+    position: relative;
+    padding: 0 90px;
+    border-radius: 20px 20px 0 0;
+    background: var(--color-gray-dark);
+    overflow: hidden;
+    @media screen and (max-width: 1100px) {
+      padding: 0 40px;
+    }
+    @media screen and (max-width: 400px) {
+      padding: 0 20px;
+    }
+    &:before,
+    &:after{
+      position: absolute;
+      display: block;
+      width: 339px;
+      height: 190px;
+      border-radius: 50%;
+      background: var(--color-white-20);
+      mix-blend-mode: plus-lighter;
+      filter: blur(50px);
+      z-index: 0;
+      content: "";
+    }
+    &:before{
+      top: -120px;
+      left: 100px;
+    }
+    &:after{
+      bottom: -130px;
+      right: 24px;
+    }
+    .info{
+      position: relative;
+      padding: 100px 0;
+      @media screen and (max-width: 1100px) {
+        padding: 60px 0;
+      }
+      @media screen and (max-width: 750px) {
+        padding: 60px 0 100px;
+      }
+      @media screen and (max-width: 400px) {
+        padding: 30px 0 100px;
+      }
+      &:before,
+      &:after{
+        position: absolute;
+        display: block;
+        content: "";
+      }
+      &:before{
+        top: 80px;
+        right: 0;
+        width: 520px;
+        height: 73px;
+        background: url(../img/brackets.png) 0 0 repeat;
+        @media screen and (max-width: 1365px) {
+          width: 440px;
+        }
+        @media screen and (max-width: 1300px) {
+          width: 360px;
+        }
+        @media screen and (max-width: 1250px) {
+          width: 282px;
+        }
+        @media screen and (max-width: 1100px) {
+          top: 40px;
+          width: 204px;
+        }
+        @media screen and (max-width: 900px) {
+          top: 60px;
+          width: 148px;
+          height: 50px;
+          background-size: 56px;
+        }
+        @media screen and (max-width: 850px) {
+          top: 64px;
+          width: 130px;
+          background-size: 50px;
+        }
+        @media screen and (max-width: 800px) {
+          top: 72px;
+          width: 104px;
+          background-size: 40px;
+        }
+        @media screen and (max-width: 768px) {
+          top: 46px;
+          width: 156px;
+          height: 54px;
+          background-size: 60px;
+        }
+        @media screen and (max-width: 750px) {
+          width: 456px;
+        }
+        @media screen and (max-width: 650px) {
+          width: 396px;
+        }
+        @media screen and (max-width: 550px) {
+          width: 276px;
+        }
+        @media screen and (max-width: 450px) {
+          width: 216px;
+        }
+        @media screen and (max-width: 400px) {
+          top: 30px;
+          width: 230px;
+          background-size: 50px;
+        }
+      }
+      &:after{
+        bottom: 70px;
+        left: 40px;
+        width: 355px;
+        height: 124px;
+        background: url(../img/plusses.png) 0 0 repeat;
+        @media screen and (max-width: 1250px) {
+          width: 278px;
+        }
+        @media screen and (max-width: 1200px) {
+          width: 240px;
+        }
+        @media screen and (max-width: 1150px) {
+          width: 202px;
+        }
+        @media screen and (max-width: 1100px) {
+          bottom: 30px;
+        }
+        @media screen and (max-width: 1000px) {
+          width: 164px;
+        }
+        @media screen and (max-width: 950px) {
+          left: 0;
+        }
+        @media screen and (max-width: 850px) {
+          width: 130px;
+          height: 100px;
+          background-size: 30px;
+        }
+        @media screen and (max-width: 750px) {
+          width: 490px;
+          height: 38px;
+        }
+        @media screen and (max-width: 650px) {
+          width: 400px;
+        }
+        @media screen and (max-width: 550px) {
+          width: 310px;
+        }
+        @media screen and (max-width: 450px) {
+          width: 220px;
+        }
+      }
+      .boxtitle{
+        @include font60(500);
+        color: var(--color-white);
+        letter-spacing: -0.06em;
+        @media screen and (max-width: 750px) {
+          text-align: center;
+        }
+        @media screen and (max-width: 400px) {
+          font-size: 26px;
+        }
+        &:first-child{
+          padding: 0 0 100px;
+          @media screen and (max-width: 1100px) {
+            padding: 0 0 70px;
+          }
+          @media screen and (max-width: 768px) {
+            padding: 0 0 48px;
+          }
+          @media screen and (max-width: 750px) {
+            padding: 70px 0 20px;
+          }
+          @media screen and (max-width: 400px) {
+            padding: 70px 0 10px;
+          }
+        }
+        &:last-child{
+          display: flex;
+          align-items: center;
+          padding: 0 0 0 480px;
+          @media screen and (max-width: 1300px) {
+            padding: 0 0 0 450px;
+          }
+          @media screen and (max-width: 1250px) {
+            padding: 0 0 0 390px;
+          }
+          @media screen and (max-width: 1200px) {
+            padding: 0 0 0 350px;
+          }
+          @media screen and (max-width: 1150px) {
+            padding: 0 0 0 310px;
+          }
+          @media screen and (max-width: 1100px) {
+            padding: 0 0 0 360px;
+          }
+          @media screen and (max-width: 1050px) {
+            padding: 0 0 0 310px;
+          }
+          @media screen and (max-width: 1000px) {
+            padding: 0 0 0 270px;
+          }
+          @media screen and (max-width: 950px) {
+            padding: 0 0 0 220px;
+          }
+          @media screen and (max-width: 850px) {
+            padding: 0 0 0 170px;
+          }
+          @media screen and (max-width: 750px) {
+            display: block;
+            padding: 0;
+          }
+          a{
+            margin: 0 0 0 80px;
+            padding: 0 42px;
+            letter-spacing: 0;
+            @media screen and (max-width: 900px) {
+              margin: 0 0 0 40px;
+            }
+            @media screen and (max-width: 768px) {
+              padding: 0 30px;
+            }
+            @media screen and (max-width: 750px) {
+              margin: 20px auto 0;
+            }
+            @media screen and (max-width: 400px) {
+              padding: 0 20px;
+              font-size: 18px;
+            }
+            svg{
+              max-width: 15px;
+              min-width: 15px;
+              height: 14px;
+              margin: 0 10px 0 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  &.userway{
+    width: 100%;
+    height: 58px;
+    background: var(--color-gray-dark);
+    @media screen and (max-width: 700px) {
+      height: 40px;
+    }
+    .wrap{
+      display: flex;
+      align-items: center;
+      height: 100%;
+      font-size: 16px;
+      line-height: 16px;
+      color: var(--color-white);
+      @media screen and (max-width: 700px) {
+        font-size: 14px;
+      }
+      @media screen and (max-width: 480px) {
+        font-size: 12px;
+      }
+    }
+  }
+}

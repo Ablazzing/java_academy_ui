@@ -1,0 +1,125 @@
+:root{
+  --color-white: #FFFFFF;
+  --color-white-20: rgba(255, 255, 255, .2);
+  --color-gray: #DEDCE7;
+  --color-gray-light: #EFEEEE;
+  --color-gray-lightest: #FCFCFC;
+  --color-gray-middle: #7D7C85;
+  --color-gray-dark: #302D3D;
+  --color-gray-dark-500: rgba(48, 45, 61, .5);
+  --color-gray-shadow: #EBE6E6;
+  --color-gray-progress: #F5F5F5;
+  --color-red: #D0082C;
+  --color-red-hover: #DA3739;
+  --color-green: #30B54D;
+  --color-black: #000000;
+  --color-orange: #FF8D3B;
+  --color-blue: #4B6FCB;
+  --color-transparent: rgba(255, 255, 255, 0) 
+}
+@mixin font14($font-weight) {
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: $font-weight;
+}
+@mixin font18($font-weight) {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: $font-weight;
+}
+@mixin font20($font-weight) {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: $font-weight;
+}
+@mixin font24($font-weight) {
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: $font-weight;
+}
+@mixin font50($font-weight) {
+  font-size: 50px;
+  line-height: 50px;
+  font-weight: $font-weight;
+  @media screen and (max-width: 768px) {
+    font-size: 40px;
+  }
+  @media screen and (max-width: 576px) {
+    font-size: 30px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 20px;
+  }
+}
+@mixin font60($font-weight) {
+  font-size: 60px;
+  line-height: 60px;
+  font-weight: $font-weight;
+  @media screen and (max-width: 768px) {
+    font-size: 50px;
+  }
+  @media screen and (max-width: 576px) {
+    font-size: 40px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 30px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@mixin textBase($font-weight) {
+  font-size: 18px;
+  line-height: 150%;
+  font-weight: $font-weight;
+}
+@mixin textBaseBig($font-weight) {
+  font-size: 20px;
+  line-height: 120%;
+  font-weight: $font-weight;
+}
+@mixin textBoxTitle() {
+  font-size: 50px;
+  line-height: 102%;
+  font-weight: 600;
+  @media screen and (max-width: 768px) {
+    font-size: 40px;
+  }
+  @media screen and (max-width: 576px) {
+    font-size: 30px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 20px;
+  }
+}
+@mixin textBoxTitleBig() {
+  font-size: 60px;
+  line-height: 86%;
+  font-weight: 500;
+  @media screen and (max-width: 768px) {
+    font-size: 50px;
+  }
+  @media screen and (max-width: 576px) {
+    font-size: 40px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 30px;
+  }
+}
+@mixin textBoxSubTitle() {
+  font-size: 24px;
+  line-height: 126%;
+  font-weight: 600;
+}
