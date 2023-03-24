@@ -1,8 +1,18 @@
+import { useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import { dispatchEvent, removeEvent } from '@/utils'
 import AuthLayout from '@/layouts/auth'
 
 const ForgotPasswordPage = () => {
+
+  useEffect(() => {
+    dispatchEvent('stopLoader')
+    return () => {
+      removeEvent('stopLoader')
+    }
+  }, [])
+
   return (
     <AuthLayout>
       <Head>
@@ -27,6 +37,7 @@ const ForgotPasswordPage = () => {
       </form>
     </AuthLayout>
   )
+
 }
 
 export default ForgotPasswordPage

@@ -1,8 +1,9 @@
+import { useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectFade, Navigation, Pagination } from 'swiper'
-import { slideToBox } from '@/utils'
+import { dispatchEvent, removeEvent, slideToBox } from '@/utils'
 import IndexLayout from '@/layouts/index.jsx'
 
 const IndexPage = () => {
@@ -16,6 +17,10 @@ const IndexPage = () => {
     el: '.pagination',
     clickable: true
   }
+  useEffect(() => {
+    dispatchEvent('stopLoader')
+    return () => removeEvent('stopLoader')
+  }, [])
 
   return (
     <IndexLayout>

@@ -1,20 +1,17 @@
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useDispatch, useSelector } from 'react-redux'
-import { toggleBasket } from '@/store/StoreApp'
+import { addEvent } from '@/utils'
 
 const Basket = () => {
-
-  const dispatch = useDispatch()
-  const modal = useSelector(state => state.app.basket)
   
-  const closeModal = (e) => {
-    e.target.classList.contains('basket') && dispatch(toggleBasket())
-  }
+  const [state, setState] = useState('basket')
+  const close = (e) => e.target.classList.contains('basket') && setState('basket')
+  useEffect(() => addEvent('openBasket', () => setState('basket active')), [])
 
   return (
-    <div onClick={ closeModal } className={ Object.keys(modal.className).join(' ') }>
+    <div onClick={ close } className={ state }>
       <div className="content">
-        <button onClick={ () => dispatch(toggleBasket()) } className="close" type="button">
+        <button onClick={ () => setState('basket') } className="close" type="button">
           <svg><use xlinkHref="/theme/sprite.svg#close"></use></svg>
         </button>
         <Link href="/userway" className="logo">

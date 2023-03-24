@@ -2,13 +2,14 @@ html, body{
   width: 100%;
   height: auto;
   background: var(--color-white);
+}
+body{
   font-family: 'Inter', sans-serif;
   @include font18(400);
   color: var(--color-black);
   &.overflow{
     overflow: hidden;
   }
-  
   &.visible{
     main.layout{
       visibility: visible!important;
@@ -114,7 +115,8 @@ html, body{
     @media screen and (max-width: 700px) {
       padding: 14px 0;
     }
-    a{
+    a,
+    button{
       font-size: 16px;
       color: var(--color-black);
       @media screen and (max-width: 576px) {
@@ -262,6 +264,7 @@ html, body{
           top: 0;
           left: 0;
           height: 100%;
+          padding: 0;
         }
       }
       &:last-child{
@@ -504,8 +507,6 @@ html, body{
     &.active{
       visibility: visible;
       opacity: 1;
-    }
-    &.open{
       .content{
         top: 0;
         visibility: visible;

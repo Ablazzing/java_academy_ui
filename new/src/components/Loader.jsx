@@ -1,47 +1,54 @@
-import { useEffect, useRef } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { toggleLoader } from '@/store/StoreApp'
+import { addEvent } from '@/utils'
 
 const Loader = () => {
-
+  
   const router = useRouter()
-  const dispatch = useDispatch()
-  const loader = useSelector(state => state.app.loader)
+  const [loaderVisible, setLoaderVisible] = useState(true)
   const refProgress = useRef()
   let lastRoute = router.pathname
+  let loaderActive = true
   let loaderInterval = null
-  const runLoader = (progress) => {
+  const runLoader = () => {
     if(loaderInterval) clearInterval(loaderInterval)
+    let progress = 140
     loaderInterval = setInterval(() => {
       --progress
-      if(progress) {
+      if(progress > 0) {
         refProgress.current.style.clipPath = 'inset(0 ' + progress + 'px 0 0)'
       } else {
-        if(loader.active) {
-          dispatch(toggleLoader({ active: false, visible: false }))
+        if(!loaderActive) {
+          clearInterval(loaderInterval)
+          setLoaderVisible(false)
           refProgress.current.style.clipPath = 'inset(0 140px 0 0)'
           document.body.classList.add('visible')
-          clearInterval(loaderInterval)
+          loaderActive = false
         }
       }
     }, .5)
   }
-  useEffect(() => runLoader(140), [])
-  useEffect(() => {
-    const handleRouteChange = (route) => {
-      if(route !== lastRoute) {
-        lastRoute = route
-        document.body.classList.remove('visible')
-        runLoader(140)
-        dispatch(toggleLoader({ active: true, visible: true }))
-      }
+  const handleRouteChange = (route) => {
+    if(route !== lastRoute) {
+      lastRoute = route
+      document.body.classList.remove('visible')
+      runLoader()
+      setLoaderVisible(true)
+      loaderActive = true
     }
+  }
+  useEffect(() => {
+    runLoader()
+    addEvent('stopLoader', () => {
+      loaderActive = false
+    })
+  }, [])
+  useEffect(() => {
     router.events.on('routeChangeStart', handleRouteChange)
   }, [router.events])
-  
+
   return (
-    <div className={loader.visible ? 'pageloader' : 'pageloader disabled'}>
+    <div className={ `pageloader ${ loaderVisible ? '' : 'disabled' }` }>
       <div className="logo">
         <img src="/theme/img/logo_dark_gray.svg" alt="" />
         <img style={{clipPath: 'inset(0 140px 0 0)'}} ref={ refProgress } src="/theme/img/logo_dark.svg" alt="" />

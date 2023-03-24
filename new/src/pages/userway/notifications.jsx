@@ -1,9 +1,22 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import UserwayLayout from '@/layouts/userway'
-import TopBar from '@/components/Topbar'
+import Topbar from '@/components/Topbar'
+import { useEffect } from 'react'
+import { dispatchEvent, removeEvent } from '@/utils'
+import ProfileRepository from '@/repositories/profile'
 
 const NotificationsPage = () => {
+
+  const loadPageData = async () => {
+    const response = await ProfileRepository.getNotificationsList()
+  }
+
+  useEffect(() => {
+    loadPageData()
+    dispatchEvent('stopLoader')
+    return () => removeEvent('stopLoader')
+  }, [])
 
   return (
     <UserwayLayout>
@@ -12,7 +25,7 @@ const NotificationsPage = () => {
       </Head>
       
       <div className="wrap container notify">
-        <TopBar back="На главную"/>
+        <Topbar />
         <div className="pagetitle"><h1>Уведомления</h1></div>
         <ul>
           <li className='new'>

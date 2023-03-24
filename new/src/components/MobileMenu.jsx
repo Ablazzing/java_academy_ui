@@ -1,26 +1,26 @@
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleMobileMenu } from '@/store/StoreApp'
+import { toggleMenu } from '@/store/StoreApp'
 import { slideToBox } from '@/utils'
 
 const MobileMenu = () => {
 
   const router = useRouter()
   const dispatch = useDispatch()
-  const isMenuActive = useSelector(state => state.app.mobileMenu)
-  const closeMenu = () => dispatch(toggleMobileMenu())
+  const menuStatus = useSelector(state => state.app.menu)
+  const close = () => dispatch(toggleMenu())
   const routeTo = (e) => {
     e.preventDefault()
-    closeMenu()
+    close()
     setTimeout(() => router.push(e.target.href), 350)
   }
   const slideTo = (e) => {
-    closeMenu()
+    close()
     slideToBox(e)
   }
 
   return (
-    <nav className={ isMenuActive ? 'open mobile' : 'mobile' }>
+    <nav className={ `mobile ${ menuStatus ? 'open' : '' }` }>
       <ul>
         <li>
           <a onClick={ routeTo } href="/">

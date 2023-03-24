@@ -15,7 +15,7 @@
         @media screen and (max-width: 480px) {
           display: block;
         }
-        span.progressbar{
+        .progressbar{
           margin: 0 0 0 40px;
         }
       }
@@ -47,6 +47,9 @@
           }
           svg{
             &.module_check_round{
+              max-width: 24px;
+              min-width: 24px;
+              height: 24px;
               margin: 0 16px 0 0;
             }
             &.arrow{
@@ -111,7 +114,7 @@
           font-weight: 600;
           line-height: 24px;
         }
-        button{
+        a{
           width: 200px;
           height: 48px;
           margin: 20px 0 0;

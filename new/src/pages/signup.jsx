@@ -1,15 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import ApiRepository from '@/repositories/api'
+import { dispatchEvent, removeEvent } from '@/utils'
+import AuthRepository from '@/repositories/auth'
 import AuthLayout from '@/layouts/auth'
 
 
 const SignupPage = () => {
-
+  
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState('')
@@ -20,7 +21,9 @@ const SignupPage = () => {
     username: Yup.string()
       .required('Необходимо указать имя'),
     password: Yup.string()
-      .required('Необходимо указать пароль'),
+      .required('Необходимо указать пароль')
+      .min(6, 'Минимальная длина пароля 6 символов')
+      .max(40, 'Максимальная длина пароля 40 символов'),
     confirmPassword: Yup.string().when('password', (password, field) => {
       if(password) {
         return field.required('Пароли не совпадают')
@@ -39,11 +42,15 @@ const SignupPage = () => {
     onSubmit: async (values, { resetForm }) => {
       setErrors('')
       setLoading(true)
-      const response = await ApiRepository.signup(values)
+      const response = await AuthRepository.signup(values)
       setLoading(false)
       response && router.push('/signin') || !response && setErrors('Ошибка в данных')
     }
   })
+  useEffect(() => {
+    dispatchEvent('stopLoader')
+    return () => removeEvent('stopLoader')
+  }, [])
 
   return (
     <AuthLayout>

@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import ApiRepository from '@/repositories/api'
+import { dispatchEvent, removeEvent } from '@/utils'
+import AuthRepository from '@/repositories/auth'
 import AuthLayout from '@/layouts/auth'
 
 const SigninPage = () => {
@@ -26,11 +27,15 @@ const SigninPage = () => {
     onSubmit: async (values, { resetForm }) => {
       setErrors('')
       setLoading(true)
-      const response = await ApiRepository.signin(values)
+      const response = await AuthRepository.signin(values)
       setLoading(false)
       response && resetForm() || !response && setErrors('Не верные логин или пароль')
     }
   })
+  useEffect(() => {
+    dispatchEvent('stopLoader')
+    return () => removeEvent('stopLoader')
+  }, [])
 
   return (
     <AuthLayout>

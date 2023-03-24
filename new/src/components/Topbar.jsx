@@ -1,15 +1,17 @@
 import Link from 'next/link'
 
-const TopBar = ({ back, data }) => {
+const Topbar = ({ data }) => {
+
   return (
     <section className="topbar">
-      <Link href="/userway" className="back">
+      <button className="back" type="button">
         <svg><use xlinkHref="/theme/sprite.svg#arrow"></use></svg>
-        <span>{ back }</span>
-      </Link>
+        <span>Назад</span>
+      </button>
       {data && <Link href={ data.link } className="data">{ data.label }</Link>}
     </section>
   )
+
 }
 
-export default TopBar
+export default Topbar

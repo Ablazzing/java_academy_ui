@@ -1,31 +1,27 @@
 import Link from 'next/link'
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleMobileMenu } from '@/store/StoreApp'
+import { toggleMenu } from '@/store/StoreApp'
 
 const HeaderIndex = () => {
 
-  const isMenuActive = useSelector(state => state.app.mobileMenu)
   const dispatch = useDispatch()
-  
+  const menuStatus = useSelector(state => state.app.menu)
+
   return (
     <header className="index">
       <div className="box">
-        <Link href="" className="logo">
-          <img src="/theme/img/logo.svg" alt="" />
+        <Link href="/" className="logo">
+          <img src="/theme/img/logo.svg" alt=""/>
         </Link>
         <ul className="auth">
           <li>
-            <Link className="btn st1" href="/signin">
-              Вход
-            </Link>
+            <Link href="/signin" className="btn st1">Вход</Link>
           </li>
           <li>
-            <Link className="btn st1" href="/signup">
-              Регистрация
-            </Link>
+            <Link href="/signup" className="btn st1">Регистрация</Link>
           </li>
           <li>
-            <button onClick={ () => dispatch(toggleMobileMenu()) } className={ isMenuActive ? 'active' : '' } type="button">
+            <button onClick={ () => dispatch(toggleMenu()) } className={ menuStatus ? 'open' : '' } type="button">
               <span></span>
             </button>
           </li>
@@ -33,6 +29,7 @@ const HeaderIndex = () => {
       </div>
     </header>
   )
+  
 }
 
 export default HeaderIndex
