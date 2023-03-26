@@ -1,0 +1,42 @@
+*{
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: var(--color-transparent);
+}
+img{
+  display: block;
+  width: 100%;
+}
+ul, ol{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: var(--color-transparent);
+  cursor: pointer;
+}
+h1, h2, h3, h4, h5, h6{
+  padding: 0;
+  margin: 0;
+}
+p{
+  padding: 0;
+  margin: 0;
+}
+a,
+input,
+textarea,
+select,
+button{
+  outline: 0;
+  text-decoration: none;
+}
+svg{
+  display: block;
+}

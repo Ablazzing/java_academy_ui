@@ -1,0 +1,27 @@
+root{
+  --color-white: #FFFFFF;
+  --color-white-20: rgba(255, 255, 255, .2);
+  --color-gray: #DEDCE7;
+  --color-gray-lightest: #FCFCFC;
+  --color-gray-dark-500: rgba(48, 45, 61, .5);
+  --color-gray-progress: #F5F5F5;
+  --color-orange: #FF8D3B;
+  --color-transparent: rgba(255, 255, 255, 0) 
+}
+
+:root{
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-red: #D0082C;
+  --color-red-hover: #DA3739;
+  --color-gray-shadow: #EBE6E6;
+  --color-gray-light: #EFEEEE;
+  --color-gray-middle: #7D7C85;
+  --color-gray-dark: #302D3D;
+  --color-gray-dark-500: rgba(48, 45, 61, .5);
+  --color-green: #30B54D;
+  --color-green-hover: #32c953;
+  --color-blue: #4B6FCB;
+  --color-blue-hover: #567ee4;
+  --color-transparent: rgba(255, 255, 255, 0) 
+}
