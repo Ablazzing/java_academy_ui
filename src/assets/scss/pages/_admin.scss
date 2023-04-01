@@ -1,0 +1,150 @@
+main.admin{
+  ul{
+    &.mainbox{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 60px 30px;
+      li{
+        a{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 30px 40px;
+          border: 2px solid var(--color-gray-middle);
+          border-radius: 5px;
+          background: var(--color-white);
+          font-size: 16px;
+          font-weight: 600;
+          line-height: 18px;
+          color: var(--color-gray-middle);
+          text-align: center;
+          transition: all .35s ease;
+          &:hover{
+            border-color: var(--color-red);
+            background: var(--color-red);
+            color: var(--color-white);
+          }
+        }
+      }
+    }
+    &.table{
+      margin: 40px 0 0;
+      &.projects{
+        li{
+          grid-template-columns: auto 650px;
+        }
+      }
+      &.modules{
+        li{
+          grid-template-columns: auto 600px;
+        }
+      }
+      &.solutions{
+        li{
+          grid-template-columns: auto 500px 100px 210px;
+        }
+      }
+      &.tests{
+        li{
+          grid-template-columns: auto 430px;
+        }
+      }
+      &.videos{
+        li{
+          grid-template-columns: auto 430px;
+        }
+      }
+      &.steps{
+        li{
+          grid-template-columns: auto 430px;
+        }
+      }
+      li{
+        display: grid;
+        margin: 0 0 20px;
+        padding: 0 0 20px;
+        border-bottom: 1px solid var(--color-gray-light);
+        &:last-child{
+          margin: 0;
+          padding: 0;
+          border: 0;
+        }
+        .item{
+          display: flex;
+          align-items: center;
+          &:last-child{
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            .btn{
+              margin-left: 20px;
+              &:first-child{
+                margin-left: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  form{
+    margin: 40px 0 0;
+    .desc{
+      padding: 0 0 10px;
+    }
+    a.git{
+      display: inline-block;
+      margin: 0 0 50px;
+      font-size: 16px;
+      line-height: 16px;
+      color: var(--color-gray-middle);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      &:hover{
+        text-decoration: none;
+      }
+    }
+    ul{
+      &.comments{
+        padding: 0 0 50px;
+        li{
+          padding: 0 0 30px;
+          &:last-child{
+            padding: 0;
+          }
+          .date{
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 14px;
+            color: var(--color-gray-middle);
+          }
+          .comment{
+            padding: 8px 0 0;
+            font-size: 16px;
+            line-height: 20px;
+          }
+        }
+      }
+      &.list{
+        li{
+
+          fieldset{
+            input{
+              margin: 0 0 10px;
+              &:last-child{
+                margin: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+    .title{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 0 20px;
+      font-weight: 700;
+    }
+  }
+}

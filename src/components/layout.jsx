@@ -1,0 +1,31 @@
+import Head from 'next/head'
+import { Header } from '@/components/header'
+import { Footer } from '@/components/footer'
+import { Menu } from '@/components/menu'
+import { Basket } from '@/components/basket'
+import { Loader } from '@/components/loader'
+import { useApp } from './context'
+
+export const AppLayout = ({ children, title='Java Academy', description='', keywords='' }) => {
+  
+  const { state } = useApp()
+  
+  return (
+    <>
+      <Head>
+        <title>{ title }</title>
+        { description && <meta name="description" content={ description } />}
+        { keywords && <meta name="keywords" content={ keywords } /> }
+      </Head>
+      <main className={`layout ${ state.section }`}>
+        { state.section !== 'auth' && <Header /> }
+        { children }
+        { state.section !== 'auth' && <Footer /> }
+        <Menu />
+        <Basket />
+      </main>
+      <Loader />
+    </>
+  )
+
+}
