@@ -2,16 +2,16 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { mainSwiperConfig, slideToBox } from '@/utils'
-import { useApp } from '@/components/context'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 
 
 const HomePage = () => {
 
-  const { setLoader } = useApp()
-
+  const { closeLoader } = useLoader()
+  
   useEffect(() => {
-    setTimeout(() => setLoader(false), 800)
+    setTimeout(() => closeLoader(), 800)
   }, [])
 
   return (

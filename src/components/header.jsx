@@ -1,15 +1,25 @@
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeProfile } from '@/store'
-import { useApp } from '@/components/context'
+import { appApi } from '@/repositories'
+import { useApp } from '@/components/contexts'
+import { useMenu } from '@/components/contexts/menu'
+import { useBasket } from '@/components/contexts/basket'
 
 export const Header = () => {
   
-  const { state, setMenu } = useApp()
   const dispatch = useDispatch()
   const profile = useSelector(state => state.app.profile)
   const notify = useSelector(state => state.app.notify)
-  const basket = useSelector(state => state.app.basket)
+  const basketData = useSelector(state => state.app.basket)
+  const { state } = useApp()
+  const { menu, toggleMenu } = useMenu()
+  const { toggleBasket } = useBasket()
+
+  useEffect(() => {
+    if(state.section === 'userway') appApi().notify.getCount()
+  }, [ state.section ])
 
   return (
     <header className={ state.section }>
@@ -27,7 +37,7 @@ export const Header = () => {
               <Link href="/signup" className="btn st1">Регистрация</Link>
             </li>
             <li>
-              <button onClick={ () => setMenu(!state.menu) } className={ state.menu ? 'open' : '' } type="button">
+              <button onClick={ () => toggleMenu() } className={ menu ? 'open' : '' } type="button">
                 <span></span>
               </button>
             </li>
@@ -35,9 +45,9 @@ export const Header = () => {
           || state.section === 'userway' && 
           <ul>
             <li>
-              <button onClick={ () => dispatchEvent('openBasket') } className="link" type="button">
+              <button onClick={ () => toggleBasket() } className="link" type="button">
                 <span className="label">Корзина</span>
-                <span className="badge red">{ basket.length }</span>
+                <span className="badge red">{ basketData.length }</span>
               </button>
             </li>
             <li>
@@ -50,7 +60,8 @@ export const Header = () => {
               <Link href="/userway/profile" className="profile">
                 {
                   !profile?.profileImage && <svg><use xlinkHref="/theme/sprite.svg#avatar"></use></svg>
-                  || <img src={`data:image/jpeg;base64,${profile?.profileImage?.data}`} />
+                  || 
+                  <img src={`data:image/jpeg;base64,${profile?.profileImage?.data}`} />
                 }
               </Link>
             </li>

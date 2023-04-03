@@ -2,6 +2,9 @@
   .pagetitle{
     padding-right: 100px;
   }
+  .desctitle{
+    padding-top: 10px;
+  }
   .swiperbox{
     position: relative;
     width: 100%;
@@ -262,6 +265,9 @@
     height: 48px;
     border-radius: 5px;
     margin: 0 auto;
+    &.disabled{
+      background: var(--color-gray-middle);
+    }
     @media screen and (max-width: 480px) {
       width: 100%;
     }

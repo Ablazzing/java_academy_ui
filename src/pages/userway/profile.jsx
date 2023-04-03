@@ -1,80 +1,91 @@
 import { useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { useSelector } from 'react-redux'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
+import { appApi } from '@/repositories'
+import { messages } from '@/lang'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Topbar } from '@/components/topbar'
-import { useApp } from '@/components/context'
 
 const ProfilePage = () => {
   
   const router = useRouter()
+  const refFile = useRef()
   const profile = useSelector(state => state.app.profile)
   const [ loading, setLoading ] = useState(false)
-  const [ errors, setErrors ] = useState('')
-  const { setLoader } = useApp()
-  const validateSchemaMain = Yup.object().shape({
-    username: Yup.string().required('Необходимо указать имя пользователя'),
-    email: Yup.string().required('Необходимо указать email')
-      .email('Не верный формат email'),
-    telegram: Yup.string().required('Необходимо указать telegram')
-  })
-  const formikMain = useFormik({
+  const [ isMainForm, setMainForm ] = useState(true)
+  const { closeLoader } = useLoader()
+  const formMain = useFormik({
+    validateOnChange: false,
+    validateOnBlur: false,
     initialValues: {
       username: profile?.username ? profile.username : '',
       email: profile?.email ? profile.email : '',
       telegram: profile?.telegram ? profile.telegram : ''
     },
-    validationSchema: validateSchemaMain,
-    onSubmit: async (values, { resetForm }) => {
-      setErrors('')
+    validationSchema: Yup.object().shape({
+      username: Yup.string().required(messages.user.username.nf),
+      email: Yup.string().required(messages.user.email.nf).email(messages.user.email.nv)
+    }),
+    onSubmit: async (values) => {
       setLoading(true)
-      //const response = await ProfileRepository.setData(values)
+      values.roles = profile.roles
+      const response = await appApi().user.setData(values)
+      if(response) {
+        NotificationManager.success(messages.user.success.main)
+      } else {
+        NotificationManager.error(messages.user.errors.undefined)
+      }
       setLoading(false)
-      //response && resetForm() || !response && setErrors('Ошибка в данных')
     }
   })
-  const validateSchemaPassword = Yup.object().shape({
-    password: Yup.string().required('Необходимо указать пароль')
-      .min(6, 'Минимальная длина пароля 6 символов')
-      .max(40, 'Максимальная длина пароля 40 символов'),
-    confirmPassword: Yup.string().when('password', (password, field) => {
-      if(password) {
-        return field.required('Пароли не совпадают').oneOf([
-          Yup.ref('password')], 
-          'Пароли не совпадают'
-        )
-      }
-    })
-  })
-  const formikPassword = useFormik({
+  const formPass = useFormik({
+    validateOnChange: false,
+    validateOnBlur: false,
     initialValues: {
       password: '',
       confirmPassword: ''
     },
-    validationSchema: validateSchemaPassword,
+    validationSchema: Yup.object().shape({
+      password: Yup.string().required(messages.user.pass.nf).min(6, messages.user.pass.min).max(40, messages.user.pass.max),
+      confirmPassword: Yup.string().when('password', (password, field) => {
+        if(password) return field.required(messages.user.pass.nv).oneOf([Yup.ref('password')], messages.user.pass.nv)
+      })
+    }),
     onSubmit: async (values, { resetForm }) => {
-      setErrors('')
-      setLoading(true)
-      //const response = await AuthRepository.signin(values)
-      setLoading(false)
-      response && resetForm() || !response && setErrors('Ошибка в данных')
+      loading = true
+      values.roles = profile.roles
+      const response = await appApi().user.setPassword(values)
+      if(response) {
+        NotificationManager.success(messages.user.success.pass)
+      } else {
+        NotificationManager.error(messages.user.errors.undefined)
+      }
+      loading = false
     }
   })
-  const refFile = useRef()
-  const changeFile = () => {
-    refFile.current.click()
-  }
-  const handleChange = (e) => setModel({ ... model, ... {[e.target.name]: e.target.value} })
-  const [isMainForm, setMainForm] = useState(true)
-  const fileUpload = (e) => {
-    console.log(e.target.files[0])
-    // file
+  const fileUpload = async (event) => {
+    if(event.target.files[0]) {
+      const formData = new FormData()
+      formData.append('file', event.target.files[0])
+      const response = await appApi().user.setPhoto(formData)
+      console.log(response)
+    }
   }
   
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    if(profile) {
+      profile.username && formMain.setFieldValue('username', profile.username)
+      profile.email && formMain.setFieldValue('email', profile.email)
+      profile.telegram && formMain.setFieldValue('telegram', profile.telegram)
+      setTimeout(() => formMain.setErrors({}), 1)
+    }
+  }, [ profile ])
+  useEffect(() => {
+    router.isReady && setTimeout(() => closeLoader(), 350)
   }, [ router.isReady ])
 
   return (
@@ -85,88 +96,88 @@ const ProfilePage = () => {
         <div className="userdata">
           <div className="photo">
             <input onChange={ fileUpload } type="file" ref={ refFile } />
-            {
-              !profile?.profileImage && <svg><use xlinkHref="/theme/sprite.svg#avatar"></use></svg>
-              || <img src={`data:image/jpeg;base64,${profile?.profileImage?.data}`} />
+            {!profile?.profileImage && 
+              <svg><use xlinkHref="/theme/sprite.svg#avatar"></use></svg>
+              || 
+              <img src={`data:image/jpeg;base64,${profile?.profileImage?.data}`} />
             }
           </div>
-          <button onClick={ changeFile } className="filechange" type="button">Изменить фото</button>
+          <button onClick={ () => refFile.current.click() } className="filechange" type="button">Изменить фото</button>
           {
             isMainForm && 
-            <form onSubmit={ formikMain.handleSubmit } className={ loading ? 'disabled' : '' } action="">
+            <form onSubmit={ formMain.handleSubmit } className={ loading ? 'disabled' : '' } action="">
               <fieldset className='mt'>
                 <input 
-                  onChange={ formikMain.handleChange } 
-                  value={ formikMain.values.username } 
-                  className={ formikMain.errors.username ? 'error' : '' } 
+                  onChange={ formMain.handleChange } 
+                  value={ formMain.values.username } 
+                  className={ formMain.errors.username ? 'error' : '' } 
                   name="username" 
                   type="text" 
                   placeholder="Ваше имя" 
                 />
-                { formikMain.errors.username && <span className="error">{ formikMain.errors.username }</span> }
+                { formMain.errors.username && <span className="error">{ formMain.errors.username }</span> }
               </fieldset>
               <fieldset>
                 <input 
-                  onChange={ formikMain.handleChange } 
-                  value={ formikMain.values.email } 
-                  className={ formikMain.errors.email ? 'error' : '' } 
+                  onChange={ formMain.handleChange } 
+                  value={ formMain.values.email } 
+                  className={ formMain.errors.email ? 'error' : '' } 
                   name="email" 
                   type="text" 
                   placeholder="Ваш email" 
                 />
-                { formikMain.errors.email && <span className="error">{ formikMain.errors.email }</span> }
+                { formMain.errors.email && <span className="error">{ formMain.errors.email }</span> }
               </fieldset>
               <fieldset>
                 <input 
-                  onChange={ formikMain.handleChange } 
-                  value={ formikMain.values.telegram } 
-                  className={ formikMain.errors.telegram ? 'error' : '' } 
+                  onChange={ formMain.handleChange } 
+                  value={ formMain.values.telegram } 
+                  className={ formMain.errors.telegram ? 'error' : '' } 
                   name="telegram" 
                   type="text" 
                   placeholder="Ваш телеграм" 
                 />
-                { formikMain.errors.telegram && <span className="error">{ formikMain.errors.telegram }</span> }
+                { formMain.errors.telegram && <span className="error">{ formMain.errors.telegram }</span> }
               </fieldset>
               <button onClick={ () => setMainForm(false) } type="button">Изменить пароль</button>
               <button className="btn st4" type='submit'>
                 { loading && <div className="formloader"></div> }
                 <span>Сохранить</span>
               </button>
-              { errors && <span className="errorform">{ errors }</span> }
             </form> || 
-            <form onSubmit={ formikPassword.handleSubmit } className={ loading ? 'disabled' : '' } action="">
+            <form onSubmit={ formPass.handleSubmit } className={ loading ? 'disabled' : '' } action="">
               <fieldset className='mt'>
                 <input 
-                  onChange={ formikPassword.handleChange } 
-                  value={ formikPassword.values.password } 
-                  className={ formikPassword.errors.password ? 'error' : '' } 
+                  onChange={ formPass.handleChange } 
+                  value={ formPass.values.password } 
+                  className={ formPass.errors.password ? 'error' : '' } 
                   name="password" 
                   type="password" 
                   placeholder="Пароль" 
                 />
-                { formikPassword.errors.password && <span className="error">{ formikPassword.errors.password }</span> }
+                { formPass.errors.password && <span className="error">{ formPass.errors.password }</span> }
               </fieldset>
               <fieldset>
                 <input 
-                  onChange={ formikPassword.handleChange } 
-                  value={ formikPassword.values.confirmPassword } 
-                  className={ formikPassword.errors.emaconfirmPasswordil ? 'error' : '' } 
+                  onChange={ formPass.handleChange } 
+                  value={ formPass.values.confirmPassword } 
+                  className={ formPass.errors.emaconfirmPasswordil ? 'error' : '' } 
                   name="confirmPassword" 
                   type="password" 
                   placeholder="Подтверждение пароля" 
                 />
-                { formikPassword.errors.confirmPassword && <span className="error">{ formikPassword.errors.confirmPassword }</span> }
+                { formPass.errors.confirmPassword && <span className="error">{ formPass.errors.confirmPassword }</span> }
               </fieldset>
               <button onClick={ () => setMainForm(true) } type="button">Изменить данные</button>
               <button className="btn st4" type='submit'>
                 { loading && <div className="formloader"></div> }
                 <span>Сохранить</span>
               </button>
-              { errors && <span className="errorform">{ errors }</span> }
             </form>
           }
         </div>
       </div>
+      <NotificationContainer />
     </AppLayout>
   )
 

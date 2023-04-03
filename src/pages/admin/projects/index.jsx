@@ -1,17 +1,28 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useApp } from '@/components/context'
+import { appApi } from '@/repositories'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const AdminProjectsPage = () => {
   
   const router = useRouter()
-  const { setLoader } = useApp()
+  const [ projects, setProjects ] = useState([])
+  const { closeLoader } = useLoader()
+
+  const loadPageData = async () => {
+    const response = await appApi().projects.getProjects({
+      slug: router.query.module
+    })
+    console.log(response)
+    if(response) setProjects(response)
+    closeLoader()
+  }
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && loadPageData()
   }, [ router.isReady ])
 
   return (

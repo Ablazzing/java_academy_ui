@@ -1,19 +1,20 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { appApi } from '@/repositories'
-import { useApp } from '@/components/context'
 import { AppLayout } from '@/components/layout'
 import { Topbar } from '@/components/topbar'
+import { useLoader } from '@/components/contexts/loader'
 
 const NotificationsPage = () => {
   
   const router = useRouter()
-  const { setLoader } = useApp()
+  const [ notify, setNotify ] = useState([])
+  const { closeLoader } = useLoader()
   const loadPageData = async () => {
     const response = await appApi().notify.getList()
-    console.log(response)
-    setLoader(false)
+    setNotify(response)
+    closeLoader()
   }
   
   useEffect(() => {
@@ -26,33 +27,17 @@ const NotificationsPage = () => {
         <Topbar />
         <div className="pagetitle"><h1>Уведомления</h1></div>
         <ul>
-          <li className='new'>
-            <div className="date">10.01.2023</div>
+        {notify.map((e, i) => {
+          return <li className={ e.isRead ? 'new' : '' } key={ i }>
+            <div className="date">{ e.date }</div>
             <div className="info">
-              <p>Проект Тоyota (Этап 1 ) принят</p>
+              <p>{ e.text }</p>
+              {e.url && e.text && 
+                <p><Link href={ e.url }>{ e.urlText }</Link></p>
+              }
             </div>
           </li>
-          <li>
-            <div className="date">09.01.2023</div>
-            <div className="info">
-              <p>Проект Тоyota (Этап 2) отклонен.</p>
-              <p><Link href="/userway">Посмотреть комментарий к проекту</Link></p>
-            </div>
-          </li>
-          <li>
-            <div className="date">09.01.2023</div>
-            <div className="info">
-              <p>Вам написали комментарий к теме Java / Булево. </p>
-              <p><Link href="/userway">Посмотреть комментарий</Link></p>
-            </div>
-          </li>
-          <li>
-            <div className="date">09.01.2023</div>
-            <div className="info">
-              <p>Уведомляем вас, что изменились правила пользования сервисом. </p>
-              <p><Link href="/userway">Подробнее</Link></p>
-            </div>
-          </li>
+        })}
         </ul>
       </div>
     </AppLayout>

@@ -1,16 +1,70 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useApp } from '@/components/context'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
+import { appApi } from '@/repositories'
+import { messages } from '@/lang'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const AdminModuleVideoCreatePage = () => {
   
   const router = useRouter()
-  const { setLoader } = useApp()
+  const [ loading, setLoading ] = useState(false)
+  const [ modules, setModules ] = useState([])
+  const [ open, setOpen ] = useState(false)
+  const [ select, setSelect ] = useState('')
+  const { closeLoader } = useLoader()
+  const form = useFormik({
+    validateOnChange: false,
+    validateOnBlur: false,
+    initialValues: {
+      name: '',
+      russianName: '',
+      description: '',
+      order: '',
+      url: '',
+      moduleName: ''
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required(messages.video.name.nf),
+      russianName: Yup.string().required(messages.video.russianName.nf),
+      description: Yup.string().required(messages.video.description.nf),
+      order: Yup.string().required(messages.video.order.nf),
+      url: Yup.string().required(messages.video.url.nf),
+    }),
+    onSubmit: async (values, { resetForm }) => {
+      setLoading(true)
+      const response = await appApi().videos.createVideo(values)
+      console.log(response)
+      setLoading(false)
+      return
+      if(response) {
+        resetForm()
+        NotificationManager.success(messages.project.success.create)
+      } else {
+        NotificationManager.error(messages.project.errors.create)
+      }
+      setLoading(false)
+    }
+  })
+  const setData = (label, value) => {
+    setSelect(label)
+    form.setFieldValue('moduleName', value)
+    setOpen(false)
+  }
+  const loadPageData = async () => {
+    const response = await appApi().modules.getModules()
+    setModules(response)
+    setData(response[0].russianName, response[0].name)
+    closeLoader()
+  }
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && loadPageData()
   }, [ router.isReady ])
 
   return (
@@ -20,21 +74,78 @@ const AdminModuleVideoCreatePage = () => {
         <div className="pagetitle admin">
           <span>Создание видео</span>
         </div>
-        <form className="boxshadow" action="">
+        <form onSubmit={ form.handleSubmit } className={`boxshadow ${loading ? 'disabled' : ''}`} action="">
           <fieldset>
-            <input type="text" placeholder="Русское название" />
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.name } 
+              className={ form.errors.name ? 'error' : '' } 
+              name="name" 
+              type="text" 
+              placeholder="Русское название" 
+            />
+            { form.errors.name && <span className="error">{ form.errors.name }</span> }
           </fieldset>
           <fieldset>
-            <input type="text" placeholder="Английское название" />
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.russianName } 
+              className={ form.errors.russianName ? 'error' : '' } 
+              name="russianName" 
+              type="text" 
+              placeholder="Английское название" 
+            />
+            { form.errors.russianName && <span className="error">{ form.errors.russianName }</span> }
           </fieldset>
           <fieldset>
-            <textarea name="" placeholder="Описание"></textarea>
+            <textarea 
+              onChange={ form.handleChange } 
+              value={ form.values.description } 
+              className={ form.errors.description ? 'error' : '' } 
+              name="description" 
+              type="text" 
+              placeholder="Описание" 
+            />
+            { form.errors.description && <span className="error">{ form.errors.description }</span> }
           </fieldset>
           <fieldset>
-            <input type="text" placeholder="Порядковый номер" />
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.order } 
+              className={ form.errors.order ? 'error' : '' } 
+              name="order" type="number" min="0" placeholder="Порядковый номер" 
+            />
+            { form.errors.order && <span className="error">{ form.errors.order }</span> }
           </fieldset>
           <fieldset>
-            <input type="text" placeholder="URL" />
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.url } 
+              className={ form.errors.url ? 'error' : '' } 
+              name="url" 
+              type="text" 
+              placeholder="URL" 
+            />
+            { form.errors.url && <span className="error">{ form.errors.url }</span> }
+          </fieldset>
+          <fieldset className="selectbox">
+            <button onClick={ () => setOpen(!open) } className={ open ? 'active' : '' } type="button">
+              { select }
+            </button>
+            <ul className={ open ? 'open' : '' }>
+            {modules.map((e, i) => {
+              return <li key={ i }>
+                <input 
+                  onChange={ () => { setData(e.russianName, e.name) } }
+                  value={ form.values.moduleName } 
+                  id={`radio${i}`} 
+                  name="moduleName" 
+                  type="radio" 
+                />
+                <label htmlFor={`radio${i}`}>{ e.russianName }</label>
+              </li>
+            })}
+            </ul>
           </fieldset>
           <button className="btn st5" type="submit">Отправить</button>
         </form>

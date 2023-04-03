@@ -1,15 +1,15 @@
 import Link from 'next/link'
-import { useApp } from '@/components/context'
+import { useBasket } from './contexts/basket'
 
 export const Basket = () => {
-  
-  const { state, setBasket } = useApp()
-  const close = (e) => e.target.classList.contains('basket') && setBasket(false)
+
+  const { basket, toggleBasket } = useBasket()
+  const close = (e) => e.target.classList.contains('basket') && toggleBasket()
 
   return (
-    <div onClick={ close } className={`basket ${ state.basket ? 'active' : '' }`}>
+    <div onClick={ close } className={`basket ${ basket.open ? 'active' : '' }`}>
       <div className="content">
-        <button onClick={ () => setState('basket') } className="close" type="button">
+        <button onClick={ () => toggleBasket() } className="close" type="button">
           <svg><use xlinkHref="/theme/sprite.svg#close"></use></svg>
         </button>
         <Link href="/userway" className="logo">

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { mainSwiperConfig } from '@/utils'
 import { appApi } from '@/repositories'
-import { useApp } from '@/components/context'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Topbar } from '@/components/topbar'
 
@@ -11,9 +11,11 @@ const TestPage = () => {
   
   const refSwiper = useRef()
   const router = useRouter()
+  const [ loading, setLoading ] = useState(false)
   const [ error, setError ] = useState(false)
-  const [ module, setModule ] = useState({})
-  const { setLoader } = useApp()
+  const [ module, setModule ] = useState({test: {}})
+  const [ model, setModel ] = useState({})
+  const { closeLoader } = useLoader()
   const loadPageData = async () => {
     const tempModule = await appApi().modules.getModule({
       slug: router.query.module
@@ -24,124 +26,75 @@ const TestPage = () => {
       })
       if(test) {
         tempModule.test = test
+        const modelData = {}
+        for(let i = 0; i < test.questions.length; i++) {
+          modelData[i] = 0
+        }
+        setModel(modelData)
         setModule(tempModule)
+        console.log(tempModule)
       }
     }
     if(!tempModule || !tempModule.test) setError(true)
     if(!error) refSwiper.current.swiper.update()
-    setLoader(false)
+    closeLoader()
   }
-  const [model, setModel] = useState({
-    v_1_1: false,
-    v_1_2: false,
-    v_1_3: false,
-    v2: 'v_2_1',
-    v_3_1: false,
-    v_3_2: false,
-    v_3_3: false,
-  })
-  const handleChange = (e) => setModel({ ... model, ... {[e.target.name]: e.target.value}})
+  const handleChange = (e) => {
+    setModel({ ... model, ... {[e.target.getAttribute('data-key')]: parseInt(e.target.value)}})
+  }
+  const submit = async () => {
+    setLoading(true)
+    const values = {
+      answers: [],
+      moduleInfo: module.name
+    }
+    for(const e in model) {
+      values.answers.push({
+        number: module.test.questions[e].number,
+        text: module.test.questions[e].text,
+        isRight: module.test.questions[e].answers[model[e]].isRight
+      })
+    }
+    const response = await appApi().tests.sendTest(values)
+    console.log(response)
+    setLoading(false)
+  }
   
   useEffect(() => {
     router.isReady && loadPageData()
   }, [ router.isReady ])
 
   return (
-    <AppLayout title={ error ? 'Тест не найден' : `Модуль ${ module.russianName }` }>
+    <AppLayout title={ error ? 'Тест не найден' : `${ module.test.title }` }>
       <div className="wrap container test">
-        <Topbar data={{ label: 'Структуры данных +Stream api', link: '/' }}/>
+        <Topbar data={{ label: module.russianName, link: `/userway/module/${ module.name }` }}/>
         {!error && 
           <>
-            <div className="pagetitle"><h1>Тест по структурам данных</h1></div>
+            <div className="pagetitle"><h1>{ module.test.title }</h1></div>
+            { module.test.description && 
+              <div className="desctitle">{ module.test.description }</div>
+            }
             <div className="swiperbox">
               <Swiper navigation={ mainSwiperConfig.navigation } modules={ mainSwiperConfig.modules } autoHeight={ true } ref={ refSwiper } >
-                <SwiperSlide>
-                  <div className="title">Вопрос 1</div>
-                  <div className="desc">В данной лекции мы разберем с вами Iterable. Он позваляет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы прямо во врем</div>
+              { module.test.questions?.map((e, i) => {
+                return <SwiperSlide key={ i }>
+                  <div className="title">Вопрос { e.number }</div>
+                  <div className="desc">{ e.text }</div>
                   <div className="variants">
                     <div className="title">Варианты ответа:</div>
                     <div className="items">
-                      <div className="item">
-                        <input checked={ model.v_1_1 } onChange={ handleChange } name="v_1_1" type="checkbox" id="v_1_1"/>
-                        <label htmlFor="v_1_1">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементыОн позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                          <svg><use xlinkHref="/theme/sprite.svg#checkbox"></use></svg>
+                    {e.answers.map((answer, id) => {
+                      return <div className="item" key={ id }>
+                        <input onChange={ handleChange } checked={ model[i] == id } name={`v${i}`} value={id} id={`v${i}_${id}`} data-key={i} type="radio" />
+                        <label htmlFor={`v${i}_${id}`}>
+                          <span>{ answer.text }</span>
                         </label>
                       </div>
-                      <div className="item">
-                        <input checked={ model.v_1_2 } onChange={ handleChange } name="v_1_2" type="checkbox" id="v_1_2" />
-                        <label htmlFor="v_1_2">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                          <svg><use xlinkHref="/theme/sprite.svg#checkbox"></use></svg>
-                        </label>
-                      </div>
-                      <div className="item">
-                        <input checked={ model.v_1_3 } onChange={ handleChange } name="v_1_3" type="checkbox" id="v_1_3" />
-                        <label htmlFor="v_1_3">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                          <svg><use xlinkHref="/theme/sprite.svg#checkbox"></use></svg>
-                        </label>
-                      </div>
+                    })}
                     </div>
                   </div>
                 </SwiperSlide>
-                <SwiperSlide>
-                  <div className="title">Вопрос 2</div>
-                  <div className="desc">В данной лекции мы разберем с вами Iterable. Он позваляет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы прямо во врем</div>
-                  <div className="variants">
-                    <div className="title">Варианты ответа:</div>
-                    <div className="items">
-                      <div className="item">
-                        <input checked={ model.v2 === 'v_2_1' } onChange={ handleChange } name="v2" value="v_2_1" type="radio" id="v_2_1" />
-                        <label htmlFor="v_2_1">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                        </label>
-                      </div>
-                      <div className="item">
-                        <input checked={ model.v2 === 'v_2_2' } onChange={ handleChange } name="v2" value="v_2_2" type="radio" id="v_2_2" />
-                        <label htmlFor="v_2_2">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                        </label>
-                      </div>
-                      <div className="item">
-                        <input checked={ model.v2 === 'v_2_3' } onChange={ handleChange } name="v2" value="v_2_3" type="radio" id="v_2_3" />
-                        <label htmlFor="v_2_3">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="title">Вопрос 3</div>
-                  <div className="desc">В данной лекции мы разберем с вами Iterable. Он позваляет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы прямо во врем</div>
-                  <div className="variants">
-                    <div className="title">Варианты ответа:</div>
-                    <div className="items">
-                      <div className="item">
-                        <input checked={ model.v_3_1 } onChange={ handleChange } name="v_3_1" type="checkbox" id="v_3_1" />
-                        <label htmlFor="v_3_1">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                          <svg><use xlinkHref="/theme/sprite.svg#checkbox"></use></svg>
-                        </label>
-                      </div>
-                      <div className="item">
-                        <input checked={ model.v_3_2 } onChange={ handleChange } name="v_3_2" type="checkbox" id="v_3_2" />
-                        <label htmlFor="v_3_2">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                          <svg><use xlinkHref="/theme/sprite.svg#checkbox"></use></svg>
-                        </label>
-                      </div>
-                      <div className="item">
-                        <input checked={ model.v_3_3 } onChange={ handleChange } name="v_3_3" type="checkbox" id="v_3_3" />
-                        <label htmlFor="v_3_3">
-                          <span>Он позволяет использовать класс в конструкции for each. Так же  с его помощью мы можем создавать итератор, который может удалять элементы</span>
-                          <svg><use xlinkHref="/theme/sprite.svg#checkbox"></use></svg>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </SwiperSlide>
+              })}
               </Swiper>
               <div className="navigation">
                 <button className="swipernav prev">
@@ -152,7 +105,9 @@ const TestPage = () => {
                 </button>
               </div>
             </div>
-            <button className="btn st4" type='button'>Завершить тест</button>
+            <button onClick={ submit } className={`btn st4 ${loading ? 'disabled' : ''}`} type='button'>
+              Завершить тест
+            </button>
             <div className="complete">
               <div className="boxshadow">
                 <div className="title">Результаты теста</div>

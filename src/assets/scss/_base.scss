@@ -12,7 +12,6 @@ body{
   }
   &.visible{
     main.layout{
-      visibility: visible!important;
       opacity: 1!important;
     }
   }
@@ -24,7 +23,6 @@ body{
       flex-direction: column;
       width: 100%;
       min-height: var(--app-height);
-      visibility: hidden;
       opacity: 0;
       &.userway{
         .wrap{
@@ -676,13 +674,13 @@ body{
     justify-content: center;
     align-items: center;
     background: var(--color-white);
-    visibility: visible;
     opacity: 1;
-    transition: all .15s ease;
+    visibility: visible;
+    transition: all .35s ease;
     z-index: 10000;
-    &.disabled{
-      visibility: hidden;
+    &.hide{
       opacity: 0;
+      visibility: hidden;
     }
     .logo{
       position: relative;

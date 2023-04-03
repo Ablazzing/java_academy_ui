@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Collapse } from 'react-collapse'
 import { appApi } from '@/repositories'
-import { useApp } from '@/components/context'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Topbar } from '@/components/topbar'
 import { Teacher } from '@/components/teacher'
@@ -14,7 +14,7 @@ const PageModule = () => {
   const [ collapse, setCollapse ] = useState(false)
   const [ error, setError ] = useState(false)
   const [ module, setModule ] = useState({})
-  const { setLoader } = useApp()
+  const { closeLoader } = useLoader()
   const loadPageData = async () => {
     const response = await appApi().modules.getModule({
       slug: router.query.module
@@ -24,7 +24,7 @@ const PageModule = () => {
     } else {
       setError(true)
     }
-    setLoader(false)
+    closeLoader()
   }
   
   useEffect(() => {
@@ -41,8 +41,8 @@ const PageModule = () => {
               <div className="pagetitle">
                 <h1>{ error ? 'Модуль не найден' : `Модуль ${ module.russianName }` }</h1>
                 <span className="progressbar orange">
-                  <span><span style={{ width: `${module.percentage}%` }}></span></span>
-                  <span>{ `${module.percentage}%` }</span>
+                  <span><span style={{ width: `${module.percentage}` }}></span></span>
+                  <span>{ `${module.percentage}` }</span>
                 </span>
               </div>
               <div className="info">
@@ -53,18 +53,17 @@ const PageModule = () => {
                 </button>
                 <Collapse isOpened={ collapse }>
                   <div className="boxshadow">
-                    <ul className="items">
-                      <li><Link href="/userway">Лекция 2</Link></li>
-                      <li>
-                        <Link href="/userway">Лекция 3</Link>
-                        <ul>
-                          <li><Link href="/userway">Лекция 3.1</Link></li>
-                          <li><Link href="/userway">Лекция 3.2</Link></li>
-                          <li><Link href="/userway">Лекция 3.3</Link></li>
-                        </ul>
-                      </li>
-                      <li><Link href="/userway">Лекция 4</Link></li>
-                    </ul>
+                    {module?.videosGroup?.map((e, i) => {
+                      return <ul className="items" key={ i }>
+                        {e.videos.map((video, id) => {
+                          return <li key={ id }>
+                            <Link href={`/userway/module/${ module.name }/lection/${ video.video.name }`}>
+                              { video.video.russianName }
+                            </Link>
+                          </li>
+                        })}
+                      </ul>
+                    })}
                   </div>
                 </Collapse>
               </div>

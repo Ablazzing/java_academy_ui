@@ -1,65 +1,200 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useApp } from '@/components/context'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
+import { appApi } from '@/repositories'
+import { messages } from '@/lang'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const AdminModuleUpdatePage = () => {
   
   const router = useRouter()
-  const [ radio, setRadio ] = useState(0)
-  const { setLoader } = useApp()
+  const [ loading, setLoading ] = useState(false)
+  const [ error, setError ] = useState(false)
+  const [ module, setModule ] = useState({})
+  const { closeLoader } = useLoader()
+  const form = useFormik({
+    validateOnChange: false,
+    validateOnBlur: false,
+    initialValues: {
+      name: '',
+      russianName: '',
+      description: '',
+      order: '',
+      positionTop: '',
+      positionLeft: '',
+      positionWidth: '',
+      isFree: '1',
+      price: ''
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required(messages.module.name.nf),
+      russianName: Yup.string().required(messages.module.russianName.nf),
+      description: Yup.string().required(messages.module.description.nf),
+      order: Yup.string().required(messages.module.order.nf),
+      positionTop: Yup.string().required(messages.module.positionTop.nf),
+      positionLeft: Yup.string().required(messages.module.positionLeft.nf),
+      positionWidth: Yup.string().required(messages.module.positionWidth.nf)
+    }),
+    onSubmit: async (values, { resetForm }) => {
+      setLoading(true)
+      const params = JSON.parse(JSON.stringify(values))
+      params.position = {
+        top: values.positionTop,
+        left: values.positionLeft,
+        width: values.positionWidth
+      }
+      params.isFree = parseInt(params.isFree) ? true : false
+      delete params.positionTop
+      delete params.positionLeft
+      delete params.positionWidth
+      const response = await appApi().modules.updateModule(params)
+      if(response) {
+        NotificationManager.success(messages.module.success.update)
+      } else {
+        NotificationManager.error(messages.module.errors.update)
+      }
+      setLoading(false)
+    }
+  })
+  const isNumber = (n) => { 
+    return !isNaN(parseInt(n)) && !isNaN(n - 0) 
+  }
+  const loadPageData = async () => {
+    const response = await appApi().modules.getModuleAdmin({
+      slug: router.query.module
+    })
+    if(response && response[0]) {
+      setModule(response[0])
+      form.setFieldValue('name', response[0].name)
+      form.setFieldValue('russianName', response[0].russianName)
+      form.setFieldValue('description', response[0].description)
+      form.setFieldValue('order', isNumber(response[0].order) ? parseInt(response[0].order) : '')
+      form.setFieldValue('positionTop', isNumber(response[0].position.top) ? parseInt(response[0].position.top) : '')
+      form.setFieldValue('positionLeft', isNumber(response[0].position.left) ? parseInt(response[0].position.left) : '')
+      form.setFieldValue('positionWidth', isNumber(response[0].position.width) ? parseInt(response[0].position.width) : '')
+      form.setFieldValue('isFree', response[0].isFree ? '1' : '0')
+      form.setFieldValue('price', isNumber(response[0].price) ? parseInt(response[0].price) : '')
+    } else {
+      setError(true)
+    }
+    closeLoader()
+  }
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && loadPageData()
   }, [ router.isReady ])
 
   return (
-    <AppLayout title='Редактирование модуля'>
+    <AppLayout title={ error ? 'Модуль не найден' : `Редактирование модуля ${ module.russianName }` }>
       <div className="wrap container">
         <Breadcrumbs />
         <div className="pagetitle admin">
-          <span>Редактирование модуля</span>
+          <span>Редактирование модуля { module.russianName }</span>
         </div>
-        <form className="boxshadow" action="">
+        <form onSubmit={ form.handleSubmit } className={ `boxshadow ${ loading ? 'disabled' : '' }` } action="">
           <fieldset>
-            <input type="text" placeholder="Русское название" />
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.name } 
+              className={ form.errors.name ? 'error' : '' } 
+              name="name" type="text" placeholder="Русское название" 
+            />
+            { form.errors.name && <span className="error">{ form.errors.name }</span> }
           </fieldset>
           <fieldset>
-            <input type="text" placeholder="Английское название" />
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.russianName } 
+              className={ form.errors.russianName ? 'error' : '' } 
+              name="russianName" type="text" placeholder="Английское название" 
+            />
+            { form.errors.russianName && <span className="error">{ form.errors.russianName }</span> }
           </fieldset>
           <fieldset>
-            <textarea name="" placeholder="Описание"></textarea>
+            <textarea 
+              onChange={ form.handleChange } 
+              value={ form.values.description } 
+              className={ form.errors.description ? 'error' : '' } 
+              name="description" type="text" placeholder="Описание" 
+            />
+            { form.errors.description && <span className="error">{ form.errors.description }</span> }
           </fieldset>
           <fieldset>
-            <input type="text" placeholder="Порядковый номер" />
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.order } 
+              className={ form.errors.order ? 'error' : '' } 
+              name="order" type="number" min="0" placeholder="Порядковый номер" 
+            />
+            { form.errors.order && <span className="error">{ form.errors.order }</span> }
           </fieldset>
-          <fieldset className="flexbox">
-            <input type="text" placeholder="Позиция по оси x" />
-            <input type="text" placeholder="Позиция по оси y" />
+          <fieldset>
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.positionTop } 
+              className={ form.errors.positionTop ? 'error' : '' } 
+              name="positionTop" type="number" min="0" placeholder="Позиция по оси x" 
+            />
+            { form.errors.positionTop && <span className="error">{ form.errors.positionTop }</span> }
+          </fieldset>
+          <fieldset>
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.positionLeft } 
+              className={ form.errors.positionLeft ? 'error' : '' } 
+              name="positionLeft" type="number" min="0" placeholder="Позиция по оси y" 
+            />
+            { form.errors.positionLeft && <span className="error">{ form.errors.positionLeft }</span> }
+          </fieldset>
+          <fieldset>
+            <input 
+              onChange={ form.handleChange } 
+              value={ form.values.positionWidth } 
+              className={ form.errors.positionWidth ? 'error' : '' } 
+              name="positionWidth" type="number" min="0" placeholder="Ширина" 
+            />
+            { form.errors.positionWidth && <span className="error">{ form.errors.positionWidth }</span> }
           </fieldset>
           <fieldset className="switchbox">
             <div className="label">Бесплатный</div>
             <ul>
               <li>
-                <input type="radio" name="radio" id="radio1" value="0" checked/>
-                <label onClick={ () => setRadio(0) } htmlFor="radio1">Да</label>
+                <input 
+                  onChange={ form.handleChange }
+                  checked={ form.values.isFree === '1' }
+                  value="1" type="radio" name="isFree" id="isFree1"
+                />
+                <label htmlFor="isFree1">Да</label>
               </li>
               <li>
-                <input type="radio" name="radio" id="radio2" value="1"/>
-                <label onClick={ () => setRadio(1) } htmlFor="radio2">Нет</label>
+                <input
+                  onChange={ form.handleChange }
+                  checked={ form.values.isFree === '0' }
+                  value="0" type="radio" name="isFree" id="isFree2"
+                />
+                <label htmlFor="isFree2">Нет</label>
               </li>
             </ul>
           </fieldset>
           {
-            Number(radio) && 
+            !Number(form.values.isFree) && 
             <fieldset>
-              <input type="text" placeholder="Цена" />
+              <input 
+                onChange={ form.handleChange } 
+                value={ form.values.price } 
+                className={ form.errors.price ? 'error' : '' } 
+                name="price" type="number" min="0" placeholder="Стоимость" 
+              />
             </fieldset> || ''
           }
           <button className="btn st5" type="submit">Отправить</button>
         </form>
       </div>
+      <NotificationContainer />
     </AppLayout>
   )
 

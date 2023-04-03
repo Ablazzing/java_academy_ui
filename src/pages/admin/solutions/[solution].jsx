@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useApp } from '@/components/context'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
@@ -9,14 +9,14 @@ const AdminSolutionUpdatePage = () => {
   const router = useRouter()
   const [ open, setOpen ] = useState(false)
   const [ select, setSelect ] = useState('Статус 1')
-  const { setLoader } = useApp()
+  const { closeLoader } = useLoader()
   const setData = (e) => {
     setSelect(e.target.value)
     setOpen(false)
   }
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && setTimeout(() => closeLoader(), 350)
   }, [ router.isReady ])
 
   return (

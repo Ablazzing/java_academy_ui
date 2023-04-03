@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useApp } from '@/components/context'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
@@ -11,7 +11,7 @@ const AdminTestUpdatePage = () => {
   const [ open2, setOpen2 ] = useState(false)
   const [ select1, setSelect1 ] = useState('Модуль 1')
   const [ select2, setSelect2 ] = useState('Верный ответ 1')
-  const { setLoader } = useApp()
+  const { closeLoader } = useLoader()
   const setData1 = (e) => {
     setSelect1(e.target.value)
     setOpen1(false)
@@ -22,7 +22,7 @@ const AdminTestUpdatePage = () => {
   }
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && setTimeout(() => closeLoader(), 350)
   }, [ router.isReady ])
 
   return (

@@ -1,32 +1,35 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { Collapse } from 'react-collapse'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { appApi } from '@/repositories'
-import { useApp } from '@/components/context'
+import { moduleStatuses } from '@/utils'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Teacher } from '@/components/teacher'
 
 const UserwayHomePage = () => {
   
+  const router = useRouter()
   const [ collapse, setCollapse ] = useState(false)
   const [ modules, setModules ] = useState([])
   const [ arrows, setArrows ] = useState([])
   const [ statuses, setStatuses ] = useState({})
-  const { setLoader } = useApp()
+  const { closeLoader } = useLoader()
   const loadPageData = async () => {
     const modulesData = await appApi().modules.getModules()
-    setModules(modulesData)
+    if(modulesData) setModules(modulesData)
     const arrowsData = await appApi().arrows.getArrows()
-    setArrows(arrowsData)
+    if(arrowsData) setArrows(arrowsData)
     const statusesData = await appApi().modules.getStatuses()
-    setStatuses(statusesData)
-    setLoader(false)
+    if(statusesData) setStatuses(statusesData)
+    setTimeout(() => closeLoader(), 350)
   }
 
   useEffect(() => {
-    loadPageData()
-  }, [])
+    router.isReady && loadPageData()
+  }, [ router.isReady ])
 
   return (
     <AppLayout title='Мой путь'>
@@ -39,48 +42,40 @@ const UserwayHomePage = () => {
           <PerfectScrollbar className="svgbox">
             <div className="box">
               {modules.map((e, i) => {
-                return <div 
-                          style={ e.position } 
-                          key={ i } 
-                          className={ `item 
-                            ${ e.isOpen ? 'open' : '' }
-                            ${ e.isOpen && (parseInt(e.percentage) === 100) ? 'ready' : '' }
-                          ` }>
-                          <div className="main">
-                            { 
-                              e.isOpen &&
-                              <Link href={`/userway/module/${ e.name }`}>
-                                <span>{ e.russianName }</span>
-                                {
-                                  parseInt(e.percentage) === 100 && 
-                                  <svg className="ready">
-                                    <use xlinkHref="/theme/sprite.svg#module_check" />
-                                  </svg>
-                                }
-                              </Link> || 
-                              <>
-                                <span>{ e.russianName }</span>
-                                <button type="button">
-                                  <svg className="module_plus">
-                                    <use xlinkHref="/theme/sprite.svg#module_plus" />
-                                  </svg>
-                                </button>
-                              </>
-                            }
-                          </div>
-                          { e.userProject && 
-                            <Link href={`/userway/module/${ e.name }/project`} className="progress">
-                              <span>{ e.userProject.projectInfo.russianName }</span>
-                              {(
-                                e.userProject.projectStatus === 'В работе' && 
-                                <div className="badge orange">В работе</div>
-                              ) || (
-                                e.userProject.projectStatus === 'В работе2' && 
-                                <div className="badge blue">В работе2</div>
-                              )}
-                            </Link>
-                          }
+                return <div style={ e.position } key={ i } className={ `item ${ e.isOpen ? 'open' : '' } ${ e.isOpen && (parseInt(e.percentage) === 100) ? 'ready' : '' } ` }>
+                  <div className="main">
+                    { e.isOpen &&
+                      <Link href={`/userway/module/${ e.name }`}>
+                        <span>{ e.russianName }</span>
+                        {
+                          parseInt(e.percentage) === 100 && 
+                          <svg className="ready">
+                            <use xlinkHref="/theme/sprite.svg#module_check" />
+                          </svg>
+                        }
+                      </Link> 
+                      || 
+                      <>
+                        <span>{ e.russianName }</span>
+                        <button type="button">
+                          <svg className="module_plus">
+                            <use xlinkHref="/theme/sprite.svg#module_plus" />
+                          </svg>
+                        </button>
+                      </>
+                    }
+                  </div>
+                  { e.userProject && 
+                    <Link href={`/userway/module/${ e.name }/project`} className="progress">
+                      <span>{ e.userProject.projectInfo.russianName }</span>
+                      { moduleStatuses[e.userProject.projectStatus] && 
+                        <div className={`badge ${ moduleStatuses[e.userProject.projectStatus] }`}>
+                          { e.userProject.projectStatus }
                         </div>
+                      }
+                    </Link>
+                  }
+                </div>
               })}
               <svg className="arrows" xmlns="http://www.w3.org/2000/svg" fill="none">
               {arrows.map((e, i) => {
@@ -109,12 +104,14 @@ const UserwayHomePage = () => {
             <div className="mobiledata">
               <button className='btn' type="button">Открыть все курсы за 50%</button>
               <ul>
-              {false && modules.map((e, i) => {
+              {modules.map((e, i) => {
                 return <li key={ i }>
-                        <span>{ e.main }</span>
-                        <span className={ !e.progress ? 'empty' : '' }>{ e.progress }</span>
-                        <svg><use xlinkHref="/theme/sprite.svg#module_plus_solid"></use></svg>
-                      </li>
+                  <span>{ e.russianName }</span>
+                  <span className={ !e.userProject ? 'empty' : '' }>{ e.userProject?.projectInfo?.russianName }</span>
+                  { !e.isOpen &&
+                    <svg><use xlinkHref="/theme/sprite.svg#module_plus_solid"></use></svg>
+                  }
+                </li>
               })}
               </ul>
             </div>
@@ -136,21 +133,21 @@ const UserwayHomePage = () => {
                       { e.userProject.projectInfo.russianName }
                     </Link>
                   </li>
-                  { e.userProject.steps && e.userProject.steps.length && <>
-                    <li>
-                      <Link href={`/userway/module/${ e.name }/project/step/${e.userProject.steps[e.userProject.steps.length - 1].step}`}>
-                        {`Этап ${e.userProject.steps[e.userProject.steps.length - 1].step}`}
-                      </Link>
-                    </li>
-                  </> }
+                  { e.userProject.steps && e.userProject.steps.length && 
+                    <>
+                      <li>
+                        <Link href={`/userway/module/${ e.name }/project/step/${e.userProject.steps[e.userProject.steps.length - 1].step}`}>
+                          {`Этап ${e.userProject.steps[e.userProject.steps.length - 1].step}`}
+                        </Link>
+                      </li>
+                    </> 
+                  }
                   <li>
-                    {(
-                      e.userProject.projectStatus === 'В работе' && 
-                      <div className="badge orange">В работе</div>
-                    ) || (
-                      e.userProject.projectStatus === 'В работе2' && 
-                      <div className="badge blue">В работе2</div>
-                    )}
+                    { moduleStatuses[e.userProject.projectStatus] && 
+                      <div className={`badge ${ moduleStatuses[e.userProject.projectStatus] }`}>
+                        { e.userProject.projectStatus }
+                      </div>
+                    }
                   </li>
                 </>}
               </ul>
@@ -173,9 +170,6 @@ const UserwayHomePage = () => {
             })}
             <div className="h1">Последние лекции</div>
             <ul className="item block">
-              <li className='padding nlp'>
-                <Link href="/"><strong>Типы данных в java</strong></Link>
-              </li>
               <li className='flex padding'>
                 <Link href="/" className='offset'>Числа</Link>
                 <svg><use xlinkHref="/theme/sprite.svg#module_check_round"></use></svg>

@@ -1,4 +1,4 @@
-import { useApp } from '@/components/context'
+import { useApp } from '@/components/contexts'
 
 export const Footer = () => {
   

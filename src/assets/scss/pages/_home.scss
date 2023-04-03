@@ -359,15 +359,12 @@
             align-items: center;
           }
           &.padding{
-            padding: 0 0 24px 24px;
-            &.nlp{
-              padding-left: 0;
-            }
+            padding: 0 0 24px;
             @media screen and (max-width: 920px) {
-              padding: 0 0 12px 12px;
+              padding: 0 0 12px;
             }
             @media screen and (max-width: 480px) {
-              padding: 0 0 8px 8px;
+              padding: 0 0 8px;
             }
             &:last-child{
               padding-bottom: 0;

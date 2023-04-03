@@ -1,10 +1,10 @@
 import Head from 'next/head'
+import { useApp } from '@/components/contexts'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { Menu } from '@/components/menu'
 import { Basket } from '@/components/basket'
 import { Loader } from '@/components/loader'
-import { useApp } from './context'
 
 export const AppLayout = ({ children, title='Java Academy', description='', keywords='' }) => {
   

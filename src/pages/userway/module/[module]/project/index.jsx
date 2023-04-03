@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { appApi } from '@/repositories'
-import { useApp } from '@/components/context'
+import { moduleStatuses } from '@/utils'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Topbar } from '@/components/topbar'
 import { Teacher } from '@/components/teacher'
@@ -12,7 +13,7 @@ const ProjectPage = () => {
   const router = useRouter()
   const [ module, setModule ] = useState({})
   const [ error, setError ] = useState(false)
-  const { setLoader } = useApp()
+  const { closeLoader } = useLoader()
   const loadPageData = async () => {
     const tempModule = await appApi().modules.getModule({
       slug: router.query.module
@@ -23,11 +24,12 @@ const ProjectPage = () => {
       })
       if(project) {
         tempModule.project = project
+        console.log(tempModule)
         setModule(tempModule)
       }
     }
     if(!tempModule || !tempModule.project) setError(true)
-    setLoader(false)
+    closeLoader()
   }
   
   useEffect(() => {
@@ -35,21 +37,19 @@ const ProjectPage = () => {
   }, [ router.isReady ])
 
   return (
-    <AppLayout title={ error ? 'Проект не найден' : module?.project?.projectInfo?.russianName }>
+    <AppLayout title={ error ? 'Проект не найден' : module.project?.projectInfo?.russianName }>
       <div className="wrap container project">
         <Topbar />
         {!error && 
           <div className="flexcontent">
             <div className="main boxshadow">
               <div className="pagetitle">
-                <h1>{ module?.project?.projectInfo?.russianName }</h1>
-                {(
-                  module?.project?.projectStatus === 'В работе' && 
-                  <span className="badge orange">В работе</span>
-                ) || (
-                  module?.project?.projectStatus === 'В работе2' && 
-                  <span className="badge blue">В работе2</span>
-                )}
+                <h1>{ module.project?.projectInfo?.russianName }</h1>
+                { moduleStatuses[module.project?.projectStatus] && 
+                  <div className={`badge ${ moduleStatuses[module.project?.projectStatus] }`}>
+                    { module.project?.projectStatus }
+                  </div>
+                }
               </div>
               <div className="subtitle">
                 <span>Модуль</span>
@@ -57,10 +57,10 @@ const ProjectPage = () => {
               </div>
               <div className="body">
                 <div className="title">Описание проекта</div>
-                <div className="text">{ module?.project?.projectInfo?.description }</div>
+                <div className="text">{ module.project?.projectInfo?.description }</div>
               </div>
               <ul className="steps">
-                {module?.project?.steps.map((e, i) => {
+                {module.project?.steps.map((e, i) => {
                   // <span className="access">Этап 3</span>
                   return <li key={ i }>
                     <Link href={`/userway/module/${ module.name }/project/step/${ e.step }`}>

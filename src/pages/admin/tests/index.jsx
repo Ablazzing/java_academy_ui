@@ -1,17 +1,24 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useApp } from '@/components/context'
+import { appApi } from '@/repositories'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const AdminTestsPage = () => {
   
   const router = useRouter()
-  const { setLoader } = useApp()
+  const { closeLoader } = useLoader()
+
+  const loadPageData = async () => {
+    //const response = await appApi().modules.getModules()
+    //console.log(response)
+    closeLoader()
+  }
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && loadPageData()
   }, [ router.isReady ])
 
   return (

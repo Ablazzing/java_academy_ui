@@ -1,77 +1,74 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
 import { appApi } from '@/repositories'
-import { useApp } from '@/components/context'
+import { messages } from '@/lang'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 
 const SigninPage = () => {
   
   const router = useRouter()
-  const loading = useRef(false)
-  const errors = useRef('')
-  const { setLoader } = useApp()
-  const formik = useFormik({
+  const [ loading, setLoading ] = useState(false)
+  const { closeLoader } = useLoader()
+  const form = useFormik({
+    validateOnChange: false,
+    validateOnBlur: false,
     initialValues: {
       email: '',
       password: ''
     },
-    validateOnChange: false,
-    validateOnBlur: false,
     validationSchema: Yup.object().shape({
-      email: Yup.string().required('Необходимо указать email')
-        .email('Не верный формат email'),
-      password: Yup.string().required('Необходимо указать пароль')
+      email: Yup.string().required(messages.user.email.nf).email(messages.user.email.nv),
+      password: Yup.string().required(messages.user.pass.nf)
     }),
     onSubmit: async (values, { resetForm }) => {
-      errors.current = ''
-      loading.current = true
+      setLoading(true)
       const response = await appApi().auth.signin(values)
       if(response) {
         resetForm()
-        const route = (response.isAdmin || response.isModerator) ? '/admin' : '/userway'
+        const isAdmin = response.roles.find(e => e.toUpperCase() === 'ROLE_ADMIN') ? true : false
+        const isModerator = response.roles.find(e => e.toUpperCase() === 'ROLE_MODERATOR') ? true : false
+        const route = (isAdmin || isModerator) ? '/admin' : '/userway'
         router.push(route)
       } else {
-        errors.current = 'Не верные логин или пароль'
+        NotificationManager.error(messages.user.errors.auth)
       }
-      loading.current = false
+      setLoading(false)
     }
   })
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && setTimeout(() => closeLoader(), 350)
   }, [ router.isReady ])
 
   return (
     <AppLayout title='Авторизация'>
-      <form onSubmit={ formik.handleSubmit } className={ loading.current ? 'disabled' : '' } action="">
+      <form onSubmit={ form.handleSubmit } className={ loading ? 'disabled' : '' } action="" >
         <Link href="/" className="logo">
           <img src="/theme/logo_dark.svg" alt="" />
         </Link>
         <div className="pagetitle"><h1>Вход</h1></div>
         <fieldset>
           <input 
-            onChange={ formik.handleChange } 
-            value={ formik.values.email } 
-            className={ formik.errors.email ? 'error' : '' } 
-            name="email" 
-            type="text" 
-            placeholder="Ваш email" 
+            onChange={ form.handleChange } 
+            value={ form.values.email } 
+            className={ form.errors.email ? 'error' : '' } 
+            name="email" type="text" placeholder="Ваш email" 
           />
-          { formik.errors.email && <span className="error">{ formik.errors.email }</span> }
+          { form.errors.email && <span className="error">{ form.errors.email }</span> }
         </fieldset>
         <fieldset>
           <input 
-            onChange={ formik.handleChange } 
-            value={ formik.values.password } 
-            className={ formik.errors.password ? 'error' : '' } 
-            name="password" 
-            type="password" 
-            placeholder="Пароль" 
+            onChange={ form.handleChange } 
+            value={ form.values.password } 
+            className={ form.errors.password ? 'error' : '' } 
+            name="password" type="password" placeholder="Пароль" 
           />
-          { formik.errors.password && <span className="error">{ formik.errors.password }</span> }
+          { form.errors.password && <span className="error">{ form.errors.password }</span> }
         </fieldset>
         <div className="actions beetwen">
           <Link href="/forgot">Забыли пароль?</Link>
@@ -83,8 +80,8 @@ const SigninPage = () => {
           { loading.current && <div className="formloader"></div> }
           <span>Войти</span>
         </button>
-        { errors.current && <span className="errorform">{ errors.current }</span> }
       </form>
+      <NotificationContainer />
     </AppLayout>
   )
 

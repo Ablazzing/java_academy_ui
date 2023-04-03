@@ -1,17 +1,17 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useApp } from '@/components/context'
+import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const AdminSolutionsPage = () => {
   
   const router = useRouter()
-  const { setLoader } = useApp()
+  const { closeLoader } = useLoader()
 
   useEffect(() => {
-    router.isReady && setTimeout(() => setLoader(false), 350)
+    router.isReady && setTimeout(() => closeLoader(), 350)
   }, [ router.isReady ])
 
   return (

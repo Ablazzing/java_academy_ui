@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
 import { slideToBox } from '@/utils'
-import { useApp } from '@/components/context'
+import { useMenu } from '@/components/contexts/menu'
 
 export const Menu = () => {
 
   const router = useRouter()
-  const { state, toggleMenu } = useApp()
+  const { menu, toggleMenu } = useMenu()
   const action = (type, target) => {
     toggleMenu()
     switch(type) {
@@ -19,7 +19,7 @@ export const Menu = () => {
   }
 
   return (
-    <nav className={ `mobile ${ state.menu ? 'open' : '' }` }>
+    <nav className={ `mobile ${ menu ? 'open' : '' }` }>
       <ul>
         <li>
           <button onClick={ () => action(null, null) } type="button">

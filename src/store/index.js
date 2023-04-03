@@ -1,31 +1,32 @@
 import router from 'next/router'
 import { createSlice, configureStore } from '@reduxjs/toolkit'
 
-const defaultState = {
-  auth: null,
-  profile: null,
-  notify: 0,
-  basket: []
-}
-
 export const appSlice = createSlice({
   name: 'app',
-  initialState: JSON.parse(JSON.stringify(defaultState)),
+  initialState: {
+    auth: null,
+    profile: null,
+    notify: 0,
+    basket: []
+  },
   reducers: {
     setProfile: (state, data) => {
       state.auth = true
-      state.profile = { ... state.profile, ... data.payload, isAdmin: true }
+      const roles = {
+        isUser: data.payload.roles.find(e => e.toUpperCase() === 'ROLE_USER') ? true : false,
+        isAdmin: data.payload.roles.find(e => e.toUpperCase() === 'ROLE_ADMIN') ? true : false,
+        isModerator: data.payload.roles.find(e => e.toUpperCase() === 'ROLE_MODERATOR') ? true : false
+      }
+      state.profile = { ... state.profile, ... data.payload, ... roles}
       if(state.profile.token) window.localStorage.setItem('token', state.profile.token)
-      
-      //response.isAdmin = response.roles.find(e => e.toLowerCase === 'ROLE_ADMIN') ? true : false
-      //response.isModerator = response.roles.find(e => e.toLowerCase === 'ROLE_MODERATOR') ? true : false
-      //delete response.roles
     },
     removeProfile: (state) => {
-      state = JSON.parse(JSON.stringify(defaultState))
       state.auth = false
-      router.asPath !== '/' && router.push('/')
+      state.profile = null,
+      state.notify = 0,
+      state.basket = []
       window.localStorage.removeItem('token')
+      router.asPath !== '/' && router.push('/')
     },
     setNotify: (state, data) => {
       state.notify = data.payload
@@ -48,3 +49,56 @@ export const {
   setNotify,
   setBasket
 } = appSlice.actions
+
+
+/*
+Modules
+[
+    {
+        "name": "Открыт",
+        "color": "синий"
+    },
+    {
+        "name": "Изучается",
+        "color": "желтый"
+    },
+    {
+        "name": "Пройден",
+        "color": "зеленый"
+    }
+]
+Projects
+[
+    {
+        "name": "Открыт",
+        "color": "синий"
+    },
+    {
+        "name": "В работе",
+        "color": "желтый"
+    },
+    {
+        "name": "Принят",
+        "color": "зеленый"
+    }
+]
+Steps
+[
+    {
+        "name": "Открыт",
+        "color": "синий"
+    },
+    {
+        "name": "На проверке",
+        "color": "желтый"
+    },
+    {
+        "name": "Принят",
+        "color": "зеленый"
+    },
+    {
+        "name": "Нужны доработки",
+        "color": "красный"
+    }
+]
+*/

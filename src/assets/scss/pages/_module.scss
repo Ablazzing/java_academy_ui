@@ -76,8 +76,12 @@
           .boxshadow{
             margin: 20px 0 0;
             ul.items{
+              padding: 0 0 14px;
+              &:last-child{
+                padding: 0;
+              }
               li{
-                padding: 0 0 20px;
+                padding: 0 0 14px;
                 &:last-child{
                   padding: 0;
                 }
