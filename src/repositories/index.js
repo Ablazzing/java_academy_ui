@@ -19,8 +19,8 @@ const auth = {
   signin: async (values) => {
     //values.email = "y22291@ya.ru"
     //values.password = "terrrr"
-    values.email = 'user@mail.ru3'
-    values.password = 'user@mail.ru3'
+    //values.email = 'user@mail.ru3'
+    //values.password = 'user@mail.ru3'
     try{
       const response = await axiosInstance.post(api + 'api/auth/signin', values)
       await appStore.dispatch(setProfile(response.data))
