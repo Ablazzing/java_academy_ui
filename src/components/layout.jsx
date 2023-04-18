@@ -4,6 +4,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { Menu } from '@/components/menu'
 import { Basket } from '@/components/basket'
+import { Offers } from '@/components/offers'
 import { Loader } from '@/components/loader'
 
 export const AppLayout = ({ children, title='Java Academy', description='', keywords='' }) => {
@@ -23,6 +24,7 @@ export const AppLayout = ({ children, title='Java Academy', description='', keyw
         { state.section !== 'auth' && <Footer /> }
         <Menu />
         <Basket />
+        <Offers />
       </main>
       <Loader />
     </>

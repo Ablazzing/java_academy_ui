@@ -1,9 +1,11 @@
 import { useApp } from '@/components/contexts'
+import { useOffers } from './contexts/offers'
 
 export const Footer = () => {
   
   const { state } = useApp()
-
+  const { toggleOffers } = useOffers()
+  
   return (
     <>
     {
@@ -23,7 +25,9 @@ export const Footer = () => {
       || state.section === 'userway' && 
       <footer className="userway">
         <div className="wrap">
-          <p>Копирайт</p>
+          <button onClick={ () => toggleOffers() } type="button">
+            Договор офферты
+          </button>
         </div>
       </footer>
     }

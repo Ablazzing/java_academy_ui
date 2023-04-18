@@ -955,6 +955,116 @@ body{
       }
     }
   }
+  .offers{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--color-gray-dark-500);
+    visibility: hidden;
+    opacity: 0;
+    transition: all .35s ease;
+    z-index: 1000;
+    &.active{
+      visibility: visible;
+      opacity: 1;
+      .content{
+        top: 0;
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+    .content{
+      position: relative;
+      top: -100px;
+      width: 100%;
+      max-width: calc(100% - 40px);
+      padding: 60px;
+      background: var(--color-white);
+      visibility: hidden;
+      opacity: 0;
+      transition: all .35s ease;
+      @media screen and (max-width: 480px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-width: 100%;
+        height: var(--app-height);
+        padding: 20px;
+      }
+      button.close{
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: block;
+        width: 20px;
+        height: 20px;
+        svg{
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .ps{
+        .text{
+          max-height: calc(var(--app-height) - 160px);
+          padding-right: 30px;
+          .title{
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 30px;
+            letter-spacing: -0.02em;
+            color: var(--color-black);
+            text-align: center;
+          }
+          .subtitle{
+            display: block;
+            padding: 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 26px;
+            letter-spacing: -0.02em;
+            color: var(--color-black);
+            text-align: center;
+          }
+          p{
+            padding: 0 0 20px;
+            strong{
+              font-weight: 600;
+            }
+            ul{
+              li{
+                &:before{
+
+                }
+              }
+            }
+          }
+        }
+        .ps__rail{
+          &-x{
+            display: none;
+          }
+          &-y{
+            width: 6px;
+            background: var(--color-gray-light);
+            opacity: 1;
+            .ps__thumb-y{
+              right: 0;
+              width: 100%;
+              border-radius: 0;
+              background: var(--color-gray-middle);
+              opacity: 1;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 @keyframes apploader{
   0%{
