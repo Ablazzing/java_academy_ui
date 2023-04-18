@@ -27,7 +27,8 @@ export const messages = {
     },
     errors: {
       undefined: 'Ошибка в данных',
-      auth: 'Не верные логин или пароль'
+      auth: 'Не верные логин или пароль',
+      registration: 'Email уже существует'
     }
   },
   module: {
@@ -77,13 +78,18 @@ export const messages = {
     url: {
       nf: 'Необходимо указать URL'
     },
+    comment: {
+      nf: 'Необходимо указать комментарий'
+    },
     success: {
       create: 'Видео успешно создано',
       update: 'Видео успешно обновлено',
+      sendComment: 'Комментарий успешно отправлен'
     },
     errors: {
       create: 'Не удалось создать видео',
       update: 'Не удалось обновить видео',
+      sendComment: 'Не удалось отправить комментарий',
     }
   },
   project: {

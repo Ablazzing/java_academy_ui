@@ -325,6 +325,8 @@ body{
     }
   }
   .badge{
+    position: relative;
+    top: 2px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -933,6 +935,24 @@ body{
       line-height: 15px;
       color: var(--color-red);
       text-align: center;
+    }
+  }
+  .notification-container{
+    .notification{
+      padding: 10px 10px 10px 50px;
+      box-shadow: none;
+      &-success{
+        background: var(--color-green);
+      }
+      &-error{
+        background: var(--color-red);
+      }
+      .notification-message{
+        .message{
+          font-size: 16px;
+          line-height: 1.2;
+        }
+      }
     }
   }
 }

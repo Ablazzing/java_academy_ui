@@ -36,10 +36,10 @@ export const lectionSwiperConfig = {
   }
 }
 
-export const moduleStatuses = {
+export const projectStatuses = {
   'Открыт': 'blue',
-  'Изучается': 'orange',
-  'Пройден': 'green'
+  'В работе': 'orange',
+  'Принят': 'green'
 }
 
 export const stepStatuses = {

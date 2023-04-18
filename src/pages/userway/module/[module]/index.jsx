@@ -11,15 +11,21 @@ import { Teacher } from '@/components/teacher'
 const PageModule = () => {
   
   const router = useRouter()
-  const [ collapse, setCollapse ] = useState(false)
+  const [ collapse, setCollapse ] = useState({})
   const [ error, setError ] = useState(false)
   const [ module, setModule ] = useState({})
   const { closeLoader } = useLoader()
+  const toggleCollapse = (i) => setCollapse({... collapse, ... {[i]: !collapse[i]}})
   const loadPageData = async () => {
     const response = await appApi().modules.getModule({
-      slug: router.query.module
+      moduleName: router.query.module
     })
     if(response) {
+      const collapses = {}
+      response.videosGroup.map((_, i) => {
+        collapses[i] = false
+      })
+      setCollapse(collapses)
       setModule(response)
     } else {
       setError(true)
@@ -45,28 +51,41 @@ const PageModule = () => {
                   <span>{ `${module.percentage}` }</span>
                 </span>
               </div>
-              <div className="info">
-                <button onClick={ () => setCollapse(!collapse) } className={ collapse ? 'active boxshadow' : 'boxshadow' } type="button">
-                  <svg className="module_check_round"><use xlinkHref="/theme/sprite.svg#module_check_round"></use></svg>
-                  <span>Просмотрено 1</span>
-                  <svg className="arrow"><use xlinkHref="/theme/sprite.svg#arrow"></use></svg>
-                </button>
-                <Collapse isOpened={ collapse }>
-                  <div className="boxshadow">
-                    {module?.videosGroup?.map((e, i) => {
-                      return <ul className="items" key={ i }>
-                        {e.videos.map((video, id) => {
-                          return <li key={ id }>
-                            <Link href={`/userway/module/${ module.name }/lection/${ video.video.name }`}>
-                              { video.video.russianName }
-                            </Link>
-                          </li>
+              {
+                module?.videosGroup?.map((e, i) => {
+                  return <div key={ i } className="info">
+                    <button onClick={ () => toggleCollapse(i) } className={ collapse[i] ? 'active boxshadow' : 'boxshadow' } type="button">
+                      {e.isAllWatched && 
+                        <svg className="module_check_round">
+                          <use xlinkHref="/theme/sprite.svg#module_check_round"></use>
+                        </svg>
+                      }
+                      <span>{ e.groupName }</span>
+                      <svg className="arrow"><use xlinkHref="/theme/sprite.svg#arrow"></use></svg>
+                    </button>
+                    <Collapse isOpened={ collapse[i] }>
+                      <div className="boxshadow">
+                        {module?.videosGroup?.map((e, i) => {
+                          return <ul className="items" key={ i }>
+                            {e.videos.map((video, id) => {
+                              return <li key={ id }>
+                                <Link href={`/userway/module/${ module.name }/lection/${ video.video.name }`}>
+                                  {video.isWatched && 
+                                    <svg className="module_check_round">
+                                      <use xlinkHref="/theme/sprite.svg#module_check_round"></use>
+                                    </svg>
+                                  }
+                                  { video.video.russianName }
+                                </Link>
+                              </li>
+                            })}
+                          </ul>
                         })}
-                      </ul>
-                    })}
+                      </div>
+                    </Collapse>
                   </div>
-                </Collapse>
-              </div>
+                })
+              }
               <div className="result">
                 <div className="label">Итоговый тест</div>
                 <Link href={`/userway/module/${ module.name }/test`} className="btn st4">Пройти</Link>

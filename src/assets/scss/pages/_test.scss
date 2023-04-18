@@ -10,21 +10,21 @@
     width: 100%;
     .swiper{
       width: calc(100% - 180px);
-      margin: 48px 90px 50px;
+      margin: 48px 90px 0;
       border-radius: 10px;
       background: var(--color-white);
       box-shadow: 4px 4px 15px var(--color-gray-shadow);
       overflow: hidden;
       @media screen and (max-width: 1400px) {
         width: calc(100% - 160px);
-        margin: 86px 80px 40px;
+        margin: 86px 80px 0;
       }
       @media screen and (max-width: 920px) {
         width: 100%;
-        margin: 30px 0;
+        margin: 30px 0 0;
       }
       @media screen and (max-width: 768px) {
-        margin: 20px 0;
+        margin: 20px 0 0;
       }
       .swiper-wrapper{
         .swiper-slide{
@@ -263,10 +263,20 @@
   button.btn{
     width: 200px;
     height: 48px;
+    margin-top: 50px;
     border-radius: 5px;
     margin: 0 auto;
     &.disabled{
       background: var(--color-gray-middle);
+    }
+    @media screen and (max-width: 1400px) {
+      margin-top: 40px;
+    }
+    @media screen and (max-width: 920px) {
+      margin-top: 30px;
+    }
+    @media screen and (max-width: 768px) {
+      margin-top: 20px;
     }
     @media screen and (max-width: 480px) {
       width: 100%;

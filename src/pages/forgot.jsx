@@ -27,8 +27,8 @@ const ForgotPasswordPage = () => {
       setLoading(true)
       const response = await appApi().auth.forgot(values)
       if(response) {
-        //resetForm()
-        
+        resetForm()
+        NotificationManager.success(response)
       } else {
         NotificationManager.error(messages.user.errors.undefined)
       }

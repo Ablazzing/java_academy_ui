@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Collapse } from 'react-collapse'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { appApi } from '@/repositories'
-import { moduleStatuses } from '@/utils'
+import { projectStatuses } from '@/utils'
+import { setShoppingCart } from '@/store'
 import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Teacher } from '@/components/teacher'
@@ -12,6 +15,8 @@ import { Teacher } from '@/components/teacher'
 const UserwayHomePage = () => {
   
   const router = useRouter()
+  const dispatch = useDispatch()
+  const shoppingCart = useSelector(state => state.app.shoppingcart)
   const [ collapse, setCollapse ] = useState(false)
   const [ modules, setModules ] = useState([])
   const [ arrows, setArrows ] = useState([])
@@ -26,6 +31,18 @@ const UserwayHomePage = () => {
     if(statusesData) setStatuses(statusesData)
     setTimeout(() => closeLoader(), 350)
   }
+  const addToBasket = (e) => {
+    const isset = shoppingCart.find(el => el.name === e.name)
+    if(isset) {
+      NotificationManager.error('Данный модуль уже есть в корзине')
+    } else {
+      dispatch(setShoppingCart({
+        type: 'add',
+        data: e
+      }))
+      NotificationManager.success('Модуль успешно добавлен в корзину')
+    }
+  }
 
   useEffect(() => {
     router.isReady && loadPageData()
@@ -36,7 +53,16 @@ const UserwayHomePage = () => {
       <div className="wrap container home">
         <div className="pagetitle">
           <h1>Мой путь</h1>
-          <button className="btn st4" type="button">Открыть все курсы за 50%</button>
+          {statuses.buttonAllBuy && statuses.buttonAllBuy.shown && 
+            <button onClick={ () => addToBasket({
+              name: 'all_modules',
+              russianName: 'Все курсы',
+              price: statuses.buttonAllBuy.oldPrice,
+              newPrice: statuses.buttonAllBuy.allPrice
+            }) } className="btn st4" type="button">
+              { statuses.buttonAllBuy.textDiscount }
+            </button>
+          }
         </div>
         <div className="tab">
           <PerfectScrollbar className="svgbox">
@@ -57,7 +83,7 @@ const UserwayHomePage = () => {
                       || 
                       <>
                         <span>{ e.russianName }</span>
-                        <button type="button">
+                        <button onClick={() => addToBasket(e)} type="button">
                           <svg className="module_plus">
                             <use xlinkHref="/theme/sprite.svg#module_plus" />
                           </svg>
@@ -68,8 +94,8 @@ const UserwayHomePage = () => {
                   { e.userProject && 
                     <Link href={`/userway/module/${ e.name }/project`} className="progress">
                       <span>{ e.userProject.projectInfo.russianName }</span>
-                      { moduleStatuses[e.userProject.projectStatus] && 
-                        <div className={`badge ${ moduleStatuses[e.userProject.projectStatus] }`}>
+                      { projectStatuses[e.userProject.projectStatus] && 
+                        <div className={`badge ${ projectStatuses[e.userProject.projectStatus] }`}>
                           { e.userProject.projectStatus }
                         </div>
                       }
@@ -102,14 +128,25 @@ const UserwayHomePage = () => {
           </button>
           <Collapse isOpened={ collapse }>
             <div className="mobiledata">
-              <button className='btn' type="button">Открыть все курсы за 50%</button>
+              {statuses.buttonAllBuy && statuses.buttonAllBuy.shown && 
+                <button onClick={ () => addToBasket({
+                  name: 'all_modules',
+                  russianName: 'Все курсы',
+                  price: statuses.buttonAllBuy.oldPrice,
+                  newPrice: statuses.buttonAllBuy.allPrice
+                }) } className="btn st4" type="button">
+                  { statuses.buttonAllBuy.textDiscount }
+                </button>
+              }
               <ul>
               {modules.map((e, i) => {
-                return <li key={ i }>
+                return <li className={ `${ e.isOpen ? 'open' : '' } ${ e.isOpen && (parseInt(e.percentage) === 100) ? 'ready' : '' } ` } key={ i }>
                   <span>{ e.russianName }</span>
                   <span className={ !e.userProject ? 'empty' : '' }>{ e.userProject?.projectInfo?.russianName }</span>
-                  { !e.isOpen &&
-                    <svg><use xlinkHref="/theme/sprite.svg#module_plus_solid"></use></svg>
+                  { !e.isOpen && 
+                    <button onClick={() => addToBasket(e)} type="button">
+                      <svg><use xlinkHref="/theme/sprite.svg#module_plus_solid"></use></svg>
+                    </button>
                   }
                 </li>
               })}
@@ -121,40 +158,39 @@ const UserwayHomePage = () => {
           <div className="main boxshadow">
             <div className="h1">Проекты</div>
             {statuses.userModulesOpen && statuses.userModulesOpen.map((e, i) => {
-              return <ul className="item" key={ i }>
+              return e.isOpen && e.userProject && 
+              <ul className="item" key={ i }>
                 <li>
                   <Link href={`/userway/module/${ e.name }`}>
                     <strong>{ e.russianName }</strong>
                   </Link>
                 </li>
-                { e.userProject && <>
-                  <li>
-                    <Link href={`/userway/module/${ e.name }/project`}>
-                      { e.userProject.projectInfo.russianName }
-                    </Link>
-                  </li>
-                  { e.userProject.steps && e.userProject.steps.length && 
-                    <>
-                      <li>
-                        <Link href={`/userway/module/${ e.name }/project/step/${e.userProject.steps[e.userProject.steps.length - 1].step}`}>
-                          {`Этап ${e.userProject.steps[e.userProject.steps.length - 1].step}`}
-                        </Link>
-                      </li>
-                    </> 
+                <li>
+                  <Link href={`/userway/module/${ e.name }/project`}>
+                    { e.userProject.projectInfo.russianName }
+                  </Link>
+                </li>
+                { e.userProject.steps && e.userProject.steps.length && 
+                  <>
+                    <li>
+                      <Link href={`/userway/module/${ e.name }/project/step/${e.userProject.steps[e.userProject.steps.length - 1].step}`}>
+                        {`Этап ${e.userProject.steps[e.userProject.steps.length - 1].step}`}
+                      </Link>
+                    </li>
+                  </> 
+                }
+                <li>
+                  { projectStatuses[e.userProject.projectStatus] && 
+                    <div className={`badge ${ projectStatuses[e.userProject.projectStatus] }`}>
+                      { e.userProject.projectStatus }
+                    </div>
                   }
-                  <li>
-                    { moduleStatuses[e.userProject.projectStatus] && 
-                      <div className={`badge ${ moduleStatuses[e.userProject.projectStatus] }`}>
-                        { e.userProject.projectStatus }
-                      </div>
-                    }
-                  </li>
-                </>}
+                </li>
               </ul>
             })}
             <div className="h1">Модули</div>
             {statuses.userModulesOpen && statuses.userModulesOpen.map((e, i) => {
-              return <ul className="item" key={ i }>
+              return e.isOpen && <ul className="item" key={ i }>
                 <li>
                   <Link href={`/userway/module/${ e.name }`}>
                     <strong>{ e.russianName }</strong>
@@ -170,21 +206,22 @@ const UserwayHomePage = () => {
             })}
             <div className="h1">Последние лекции</div>
             <ul className="item block">
-              <li className='flex padding'>
-                <Link href="/" className='offset'>Числа</Link>
-                <svg><use xlinkHref="/theme/sprite.svg#module_check_round"></use></svg>
-              </li>
-              <li className='flex padding'>
-                <Link href="/" className='offset'>Символы</Link>
-                <svg><use xlinkHref="/theme/sprite.svg#module_check_round"></use></svg>
-              </li>
-              <li className='padding'><Link href="/" className='offset'>Этап 3</Link></li>
-              <li className='padding'><span className="access">Этап 4</span></li>
+              {statuses.lastFiveVideos && statuses.lastFiveVideos.map((e, i) => {
+                return <li className='flex padding' key={ i }>
+                  <Link href={`/userway/module/${ e.video.moduleName }/lection/${ e.video.name }`} className='offset'>
+                    { e.video.russianName }
+                  </Link>
+                  {e.isWatched && 
+                    <svg><use xlinkHref="/theme/sprite.svg#module_check_round"></use></svg>
+                  }
+                </li>
+              })}
             </ul>
           </div>
           <Teacher />
         </div>
       </div>
+      <NotificationContainer />
     </AppLayout>
   )
 

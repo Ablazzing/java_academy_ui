@@ -7,7 +7,8 @@ export const appSlice = createSlice({
     auth: null,
     profile: null,
     notify: 0,
-    basket: []
+    shoppingcart: [],
+    crumbs: {}
   },
   reducers: {
     setProfile: (state, data) => {
@@ -24,16 +25,25 @@ export const appSlice = createSlice({
       state.auth = false
       state.profile = null,
       state.notify = 0,
-      state.basket = []
+      state.shoppingcart = []
       window.localStorage.removeItem('token')
       router.asPath !== '/' && router.push('/')
     },
     setNotify: (state, data) => {
       state.notify = data.payload
     },
-    setBasket: (state, data) => {
-      state.notify = data.payload
-    }
+    setShoppingCart: (state, data) => {
+      if(data.payload.type === 'add') {
+        state.shoppingcart.push(data.payload.data)
+      } else {
+        const id = state.shoppingcart.findIndex(e => e.name === data.payload.data)
+        if(id >= 0) state.shoppingcart.splice(id, 1)
+      }
+      window.localStorage.setItem('basket', JSON.stringify(state.shoppingcart))
+    },
+    setCrumbs: (state, data) => {
+      state.crumbs = {... state.crumbs, ... data.payload}
+    },
   }
 })
 
@@ -47,7 +57,8 @@ export const {
   setProfile,
   removeProfile,
   setNotify,
-  setBasket
+  setShoppingCart,
+  setCrumbs
 } = appSlice.actions
 
 

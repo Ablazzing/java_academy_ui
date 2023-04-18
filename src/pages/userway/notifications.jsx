@@ -12,6 +12,7 @@ const NotificationsPage = () => {
   const [ notify, setNotify ] = useState([])
   const { closeLoader } = useLoader()
   const loadPageData = async () => {
+    appApi().notify.getCount()
     const response = await appApi().notify.getList()
     setNotify(response)
     closeLoader()
@@ -26,19 +27,25 @@ const NotificationsPage = () => {
       <div className="wrap container notify">
         <Topbar />
         <div className="pagetitle"><h1>Уведомления</h1></div>
-        <ul>
-        {notify.map((e, i) => {
-          return <li className={ e.isRead ? 'new' : '' } key={ i }>
-            <div className="date">{ e.date }</div>
-            <div className="info">
-              <p>{ e.text }</p>
-              {e.url && e.text && 
-                <p><Link href={ e.url }>{ e.urlText }</Link></p>
-              }
-            </div>
-          </li>
-        })}
-        </ul>
+        { notify.length && 
+          <ul>
+            {
+              notify.map((e, i) => {
+                return <li className={ !e.isRead ? 'new' : '' } key={ i }>
+                  <div className="date">{ e.date }</div>
+                  <div className="info">
+                    <p>{ e.text }</p>
+                    {e.url && e.text && 
+                      <p><Link href={ e.url }>{ e.urlText }</Link></p>
+                    }
+                  </div>
+                </li>
+              })
+            }
+          </ul>
+          || 
+          <div className="empty">Уведомления отсутствуют</div>
+        }
       </div>
     </AppLayout>
   )

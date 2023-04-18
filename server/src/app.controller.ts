@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Query, Param, Headers, Put } from '@nestjs
 import { UploadedFile, UseInterceptors } from '@nestjs/common/decorators'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { WebserverService } from 'src/webserver/webserver.service'
+import * as FormData from 'form-data'
 
 @Controller()
 export class AppController {
@@ -58,17 +59,17 @@ export class AppController {
   @UseInterceptors(FileInterceptor('file'))
   async updateUserPhoto(
     @Headers() headers: Record < string, string >,
-    @Body() data: any,
     @UploadedFile() file: any
   ) {
-    console.log(file)
     const params = {
       headers: {
         Authorization: headers.authorization,
         'Content-type': 'multipart/form-data'
       }
     }
-    const out: any = await this.webServer.post('https://ablazzing.mol.fvds.ru/api/v1/profile/photo', data, params)
+    const formData = new FormData()
+    formData.append('file', file.buffer, file.originalname)
+    const out: any = await this.webServer.post('https://ablazzing.mol.fvds.ru/api/v1/profile/photo', formData, params)
     return out
   }
   
@@ -127,7 +128,7 @@ export class AppController {
   ) {
     const params = { 
       headers: { Authorization: headers.authorization },
-      params: { moduleName: data.slug }
+      params: data
     }
     const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/user-module/full-info', params)
     return out
@@ -140,7 +141,7 @@ export class AppController {
   ) {
     const params = { 
       headers: { Authorization: headers.authorization },
-      params: { moduleName: data.slug }
+      params: data
     }
     const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/moduleInfo', params)
     return out
@@ -180,7 +181,7 @@ export class AppController {
   ) {
     const params = {
       headers: { Authorization: headers.authorization },
-      params: { moduleName: data.slug }
+      params: data
     }
     const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/user-project', params)
     return out
@@ -194,7 +195,7 @@ export class AppController {
   ) {
     const params = {
       headers: { Authorization: headers.authorization },
-      params: { moduleName: data.slug, stepNumber: data.step }
+      params: data
     }
     const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/user-project/step/'+step, params)
     return out
@@ -234,19 +235,43 @@ export class AppController {
   ) {
     const params = {
       headers: { Authorization: headers.authorization },
-      params: { moduleName: data.slug }
+      params: data
     }
     const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/quiz', params)
     return out
   }
   
-  @Post('/api/v1/quiz/user-result')
+  @Get('/api/v1/quiz/result')
+  async getQuizResult(
+    @Headers() headers: Record < string, string >,
+    @Query() data: any
+  ) {
+    const params = {
+      headers: { Authorization: headers.authorization },
+      params: data
+    }
+    const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/quiz/result', params)
+    return out
+  }
+  
+  @Post('/api/v1/quiz/user-module')
   async sendQuiz(
     @Headers() headers: Record < string, string >,
     @Body() data: any
   ) {
     const params = { headers: { Authorization: headers.authorization } }
-    const out: any = await this.webServer.post('https://ablazzing.mol.fvds.ru/api/v1/quiz/user-result', data, params)
+    const out: any = await this.webServer.post('https://ablazzing.mol.fvds.ru/api/v1/quiz/user-module', data, params)
+    return out
+  }
+  
+  @Post('/api/v1/quiz/reset-status')
+  async sendQuizReset(
+    @Headers() headers: Record < string, string >,
+    @Body() data: any
+  ) {
+    console.log('https://ablazzing.mol.fvds.ru/api/v1/quiz/reset-status', data)
+    const params = { headers: { Authorization: headers.authorization } }
+    const out: any = await this.webServer.post('https://ablazzing.mol.fvds.ru/api/v1/quiz/reset-status', data, params)
     return out
   }
   
@@ -257,7 +282,7 @@ export class AppController {
   ) {
     const params = {
       headers: { Authorization: headers.authorization },
-      params: { moduleName: data.slug, videoName: data.video }
+      params: data
     }
     const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/video', params)
     return out
@@ -273,16 +298,36 @@ export class AppController {
     return out
   }
   
-  @Get('/api/v1/video')
+  @Get('/api/v1/comment')
   async getVideoComments(
     @Headers() headers: Record < string, string >,
     @Query() data: any
   ) {
     const params = {
       headers: { Authorization: headers.authorization },
-      params: { moduleName: data.slug, videoName: data.video }
+      params: data
     }
     const out: any = await this.webServer.get('https://ablazzing.mol.fvds.ru/api/v1/comment', params)
+    return out
+  }
+  
+  @Post('/api/v1/comment')
+  async sendVideoComment(
+    @Headers() headers: Record < string, string >,
+    @Body() data: any
+  ) {
+    const params = { headers: { Authorization: headers.authorization } }
+    const out: any = await this.webServer.post('https://ablazzing.mol.fvds.ru/api/v1/comment', data, params)
+    return out
+  }
+  
+  @Post('/api/v1/comment/answer')
+  async sendAnswerVideoComment(
+    @Headers() headers: Record < string, string >,
+    @Body() data: any
+  ) {
+    const params = { headers: { Authorization: headers.authorization } }
+    const out: any = await this.webServer.post('https://ablazzing.mol.fvds.ru/api/v1/comment/answer', data, params)
     return out
   }
 

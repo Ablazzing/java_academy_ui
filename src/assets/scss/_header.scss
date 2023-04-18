@@ -246,7 +246,7 @@ header{
             padding: 0 0 0 20px;
           }
           @media screen and (max-width: 480px) {
-            padding: 0 0 0 10px;
+            padding: 0 0 0 6px;
           }
           &:first-child{
             padding: 0;
@@ -264,7 +264,7 @@ header{
               font-size: 14px;
             }
             @media screen and (max-width: 480px) {
-              font-size: 12px;
+              font-size: 10px;
             }
             &:hover{
               color: var(--color-red);
@@ -311,7 +311,7 @@ header{
               margin: 0 0 0 20px;
             }
             @media screen and (max-width: 480px) {
-              margin: 0 0 0 10px;
+              margin: 0;
             }
             svg{
               width: 100%;

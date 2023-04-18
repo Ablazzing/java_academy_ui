@@ -12,11 +12,37 @@ const Route2LabelMap = {
 };
 
 export const Breadcrumbs = () => {
-  const router = useRouter();
 
-  const [crumbs, setCrumbs] = useState([]);
+  const router = useRouter()
+  const [ crumbs, setCrumbs ] = useState([])
+  const routerMap = {
+    admin: 'Главная',
+    projects: 'Проекты',
+  }
+  const setCrumbs2 = () => {
+    const segments = router.pathname.split('/')
+    const crumbs = []
+    segments.map(e => {
+      if(e) {
+        let route = e
+        if(e.indexOf('[') === 0) {
+          route = router.query[route.replace(/[\[\]']+/g, '')]
+          crumbs.splice(crumbs.length - 1, 1)
+        } else {
+          route = routerMap[route]
+        }
+        crumbs.push({
+          route: route
+        })
+      }
+    })
+
+
+    console.log(crumbs, router)
+  }
 
   useEffect(() => {
+    router.isReady && setCrumbs2()
     const segmentsPath = router.asPath.split("/");
     const segmentsRoute = router.route.split("/");
     const crumbLinks = CombineAccumulatively(segmentsPath);
@@ -32,7 +58,7 @@ export const Breadcrumbs = () => {
       return crumb;
     });
     setCrumbs(crumbs);
-
+    
     console.log({
       router,
       segmentsPath,
@@ -41,7 +67,7 @@ export const Breadcrumbs = () => {
       crumbLabels,
       crumbs,
     });
-  }, [router.route]);
+  }, [ router.isReady ])
 
   return (
     <ul className="breads">

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { appApi } from '@/repositories'
-import { moduleStatuses } from '@/utils'
+import { projectStatuses } from '@/utils'
 import { useLoader } from '@/components/contexts/loader'
 import { AppLayout } from '@/components/layout'
 import { Topbar } from '@/components/topbar'
@@ -16,15 +16,14 @@ const ProjectPage = () => {
   const { closeLoader } = useLoader()
   const loadPageData = async () => {
     const tempModule = await appApi().modules.getModule({
-      slug: router.query.module
+      moduleName: router.query.module
     })
     if(tempModule) {
       const project = await appApi().projects.getProject({
-        slug: router.query.module
+        moduleName: router.query.module
       })
       if(project) {
         tempModule.project = project
-        console.log(tempModule)
         setModule(tempModule)
       }
     }
@@ -45,8 +44,8 @@ const ProjectPage = () => {
             <div className="main boxshadow">
               <div className="pagetitle">
                 <h1>{ module.project?.projectInfo?.russianName }</h1>
-                { moduleStatuses[module.project?.projectStatus] && 
-                  <div className={`badge ${ moduleStatuses[module.project?.projectStatus] }`}>
+                { projectStatuses[module.project?.projectStatus] && 
+                  <div className={`badge ${ projectStatuses[module.project?.projectStatus] }`}>
                     { module.project?.projectStatus }
                   </div>
                 }
@@ -61,15 +60,24 @@ const ProjectPage = () => {
               </div>
               <ul className="steps">
                 {module.project?.steps.map((e, i) => {
-                  // <span className="access">Этап 3</span>
                   return <li key={ i }>
-                    <Link href={`/userway/module/${ module.name }/project/step/${ e.step }`}>
-                      Этап { e.step }
-                    </Link>
-                    { e.isClosed && <>
-                      <svg><use xlinkHref="/theme/sprite.svg#module_check_round"></use></svg>
-                      <span className='gray'>Принят</span>
-                    </> }
+                    { 
+                      e.isClosed &&
+                      <>
+                        <span className="access">Этап { e.step }</span> 
+                        { 
+                          e.status === 'Принят' && 
+                          <svg><use xlinkHref="/theme/sprite.svg#module_check_round"></use></svg>
+                        }
+                      </>
+                      || 
+                      <>
+                        <Link href={`/userway/module/${ module.name }/project/step/${ e.step }`}>
+                          <span>Этап { e.step }</span>
+                          <span className='status gray'>{ e.status }</span>
+                        </Link>
+                      </>
+                    }
                   </li>
                 })}
               </ul>

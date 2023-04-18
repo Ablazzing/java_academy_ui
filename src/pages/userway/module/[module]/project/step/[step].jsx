@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useFormik } from 'formik'
+import * as moment from 'moment'
 import * as Yup from 'yup'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 import { appApi } from '@/repositories'
@@ -24,7 +25,8 @@ const StepPage = () => {
     validateOnBlur: false,
     initialValues: {
       gitUrl: '',
-      moduleName: ''
+      moduleName: '',
+      step: null
     },
     validationSchema: Yup.object().shape({
       gitUrl: Yup.string().required(messages.project.git.nf)
@@ -32,10 +34,9 @@ const StepPage = () => {
     onSubmit: async (values, { resetForm }) => {
       loading.current = 'disabled'
       const response = await appApi().projects.sendProjectStep(values)
-      console.log(response)
       if(response) {
         resetForm()
-        NotificationManager.error(messages.project.success.git)
+        NotificationManager.success(messages.project.success.git)
       } else {
         NotificationManager.error(messages.project.errors.undefined)
       }
@@ -44,19 +45,20 @@ const StepPage = () => {
   })
   const loadPageData = async () => {
     const tempModule = await appApi().modules.getModule({
-      slug: router.query.module
+      moduleName: router.query.module
     })
     if(tempModule) {
       const project = await appApi().projects.getProject({
-        slug: router.query.module
+        moduleName: router.query.module
       })
       if(project) tempModule.project = project
       form.setFieldValue('moduleName', tempModule.name)
+      form.setFieldValue('step', router.query.step)
     }
     if(tempModule && tempModule.project) {
       const step = await appApi().projects.getStep({
-        slug: router.query.module,
-        step: router.query.step
+        moduleName: router.query.module,
+        stepNumber: router.query.step
       })
       if(step) {
         tempModule.step = step
@@ -95,30 +97,35 @@ const StepPage = () => {
               </div>
               <div className="boxtitle">Описание этапа</div>
               <div className="boxshadow">
-                <div className="body">
-                  <p>На этом проекте с тобой создадим приложение, которое будет эмулировать весь процесс производства и продажи компании Toyota.</p>
-                </div>
+                <div className="body">{ module.step?.projectInfoStep?.description }</div>
               </div>
               <div className="boxtitle">Требования</div>
               <ul className="list">
-                <li className="boxshadow">Создать новый проект</li>
+              {module.step && module.step.projectInfoStep.requirements.map((e, i) => {
+                return <li className="boxshadow" key={ i }>
+                  { e }
+                </li>
+              })}
               </ul>
               <div className="boxtitle">Решение</div>
               <div className="boxshadow">
-                <div className="item">
-                  <div className="label">Решение</div>
-                  <div className="desc">
-                    <span>https://githab/1351351651515</span>
-                    <span>Отправлено 10:25 10.01.23</span>
+                {module?.step?.gitUrl && 
+                  <div className="item">
+                    <div className="label">Решение</div>
+                    <div className="desc">
+                      <span>{ module?.step?.gitUrl }</span>
+                    </div>
                   </div>
-                </div>
-                <div className="item">
-                  <div className="label">Комментарий</div>
-                  <div className="desc">
-                    <span>Нужно исправить это и это</span>
-                    <span>10:50 10.01.23</span>
+                }
+                {module.step && module.step.comments.map((e, i) => {
+                  return <div className="item" key={ i }>
+                    <div className="label">Комментарий</div>
+                    <div className="desc">
+                      <span>{ e.comment }</span>
+                      <span>{ moment(e.time).format('HH:mm DD.MM.YYYY') }</span>
+                    </div>
                   </div>
-                </div>
+                })}
               </div>
               <div className="boxshadow">
                 <form onSubmit={ form.handleSubmit } className={`item ${ loading.current ? 'disabled' : '' }`} action="">

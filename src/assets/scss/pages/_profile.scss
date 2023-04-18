@@ -14,6 +14,7 @@
       padding: 30px 0 0;
     }
     .photo{
+      position: relative;
       width: 150px;
       height: 150px;
       margin: 0 auto 20px;
@@ -22,15 +23,46 @@
       input{
         display: none;
       }
+      .loader{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--color-red);
+        visibility: hidden;
+        opacity: 0;
+        transition: all .35s ease;
+        &.active{
+          visibility: visible;
+          opacity: 1;
+        }
+        &:after {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          display: block;
+          width: 40px;
+          height: 40px;
+          margin: -20px 0 0 -20px;
+          border-radius: 50%;
+          border: 2px solid var(--color-transparent);
+          border-color: var(--color-white) var(--color-transparent) var(--color-white) var(--color-transparent);
+          animation: formloader 1.2s linear infinite;
+          content: "";
+        }
+      }
       svg{
         display: block;
         width: 100%;
         height: 100%;
+        cursor: pointer;
       }
       img{
         display: block;
         width: 100%;
         height: 100%;
+        cursor: pointer;
       }
     }
     .filechange{

@@ -16,6 +16,7 @@ const ProfilePage = () => {
   const refFile = useRef()
   const profile = useSelector(state => state.app.profile)
   const [ loading, setLoading ] = useState(false)
+  const [ uploading, setUploading ] = useState(false)
   const [ isMainForm, setMainForm ] = useState(true)
   const { closeLoader } = useLoader()
   const formMain = useFormik({
@@ -36,6 +37,7 @@ const ProfilePage = () => {
       const response = await appApi().user.setData(values)
       if(response) {
         NotificationManager.success(messages.user.success.main)
+        if(response.token) window.localStorage.setItem('token', response.token)
       } else {
         NotificationManager.error(messages.user.errors.undefined)
       }
@@ -56,23 +58,27 @@ const ProfilePage = () => {
       })
     }),
     onSubmit: async (values, { resetForm }) => {
-      loading = true
+      setLoading(true)
       values.roles = profile.roles
       const response = await appApi().user.setPassword(values)
       if(response) {
         NotificationManager.success(messages.user.success.pass)
+        if(response.token) window.localStorage.setItem('token', response.token)
       } else {
         NotificationManager.error(messages.user.errors.undefined)
       }
-      loading = false
+      resetForm()
+      setLoading(false)
     }
   })
   const fileUpload = async (event) => {
     if(event.target.files[0]) {
+      setUploading(true)
       const formData = new FormData()
       formData.append('file', event.target.files[0])
-      const response = await appApi().user.setPhoto(formData)
-      console.log(response)
+      await appApi().user.setPhoto(formData)
+      NotificationManager.success('Фотография успешно обновлена')
+      setUploading(false)
     }
   }
   
@@ -96,11 +102,12 @@ const ProfilePage = () => {
         <div className="userdata">
           <div className="photo">
             <input onChange={ fileUpload } type="file" ref={ refFile } />
-            {!profile?.profileImage && 
-              <svg><use xlinkHref="/theme/sprite.svg#avatar"></use></svg>
+            {!profile?.image?.data && 
+              <svg onClick={ () => refFile.current.click() }><use xlinkHref="/theme/sprite.svg#avatar"></use></svg>
               || 
-              <img src={`data:image/jpeg;base64,${profile?.profileImage?.data}`} />
+              <img onClick={ () => refFile.current.click() } src={`data:image/jpeg;base64,${profile?.image?.data}`} />
             }
+            <div className={`loader ${uploading ? 'active' : ''}`}></div>
           </div>
           <button onClick={ () => refFile.current.click() } className="filechange" type="button">Изменить фото</button>
           {

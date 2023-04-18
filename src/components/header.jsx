@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeProfile } from '@/store'
+import { removeProfile, setShoppingCart } from '@/store'
 import { appApi } from '@/repositories'
 import { useApp } from '@/components/contexts'
 import { useMenu } from '@/components/contexts/menu'
@@ -12,10 +13,28 @@ export const Header = () => {
   const dispatch = useDispatch()
   const profile = useSelector(state => state.app.profile)
   const notify = useSelector(state => state.app.notify)
-  const basketData = useSelector(state => state.app.basket)
+  const basketData = useSelector(state => state.app.shoppingcart)
   const { state } = useApp()
   const { menu, toggleMenu } = useMenu()
   const { toggleBasket } = useBasket()
+  const openBasket = () => {
+    if(basketData.length) {
+      toggleBasket()
+    } else {
+      NotificationManager.error('Корзина пуста')
+    }
+  }
+
+  useEffect(() => {
+    let basket = window.localStorage.getItem('basket')
+    basket = (basket) ? JSON.parse(basket) : null
+    if(basket) {
+      basket.map(e => dispatch(setShoppingCart({
+        type: 'add',
+        data: e
+      })))
+    }
+  }, [])
 
   useEffect(() => {
     if(state.section === 'userway') appApi().notify.getCount()
@@ -45,7 +64,7 @@ export const Header = () => {
           || state.section === 'userway' && 
           <ul>
             <li>
-              <button onClick={ () => toggleBasket() } className="link" type="button">
+              <button onClick={ () => openBasket() } className="link" type="button">
                 <span className="label">Корзина</span>
                 <span className="badge red">{ basketData.length }</span>
               </button>
@@ -85,6 +104,7 @@ export const Header = () => {
           </>
         }
       </div>
+      <NotificationContainer />
     </header>
   )
   

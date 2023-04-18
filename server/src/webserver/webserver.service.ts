@@ -33,7 +33,6 @@ export class WebserverService {
   }
   
   async put(url: string, data: object, headers: any): Promise<AxiosResponse<string>> {
-    console.log(data)
     try{
       headers.headers = headers.headers ? headers.headers : {}
       const response: any = await this.httpService.axiosRef.put(url, data, headers)

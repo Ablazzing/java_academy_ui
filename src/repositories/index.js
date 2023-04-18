@@ -19,8 +19,8 @@ const auth = {
   signin: async (values) => {
     //values.email = "y22291@ya.ru"
     //values.password = "terrrr"
-    //values.email = 'user@mail.ru3'
-    //values.password = 'user@mail.ru3'
+    values.email = 'y2286122@yandex.ru'
+    values.password = 'terrrr'
     try{
       const response = await axiosInstance.post(api + 'api/auth/signin', values)
       await appStore.dispatch(setProfile(response.data))
@@ -41,8 +41,7 @@ const auth = {
   forgot: async (values) => {
     try{
       const response = await axiosInstance.post(api + 'api/auth/forget-password', values)
-      console.log(response)
-      return true
+      return response.data
     } catch(error) {
       return false
     }
@@ -75,7 +74,11 @@ const user = {
           'Content-type': 'multipart/form-data'
         }
       })
-      console.log(response)
+      if(response.data.image) {
+        const profile = JSON.parse(JSON.stringify(appStore.getState().app.profile))
+        profile.image = response.data.image
+        await appStore.dispatch(setProfile(profile))
+      }
       return response.data
     } catch(error) {
       sendError(error)
@@ -197,7 +200,7 @@ const projects = {
   },
   getStep: async (params) => {
     try{
-      const response = await axiosInstance.get(api + 'api/v1/user-project/step/'+params.step, {
+      const response = await axiosInstance.get(api + 'api/v1/user-project/step/'+params.stepNumber, {
         params: params
       })
       return response.data
@@ -232,15 +235,35 @@ const tests = {
       return false
     }
   },
-  sendTest: async (values) => {
+  getTestResults: async (params) => {
     try{
-      const response = await axiosInstance.post(api + 'api/v1/quiz/user-result', values)
+      const response = await axiosInstance.get(api + 'api/v1/quiz/result', {
+        params: params
+      })
       return response.data
     } catch(error) {
       sendError(error)
       return false
     }
-  }
+  },
+  sendTest: async (values) => {
+    try{
+      const response = await axiosInstance.post(api + 'api/v1/quiz/user-module', values)
+      return response.data
+    } catch(error) {
+      sendError(error)
+      return false
+    }
+  },
+  sendTestReset: async (values) => {
+    try{
+      const response = await axiosInstance.post(api + 'api/v1/quiz/reset-status', values)
+      return response.data
+    } catch(error) {
+      sendError(error)
+      return false
+    }
+  },
 }
 
 const comments = {
@@ -255,6 +278,24 @@ const comments = {
       return false
     }
   },
+  sendVideoComment: async (values) => {
+    try{
+      const response = await axiosInstance.post(api + 'api/v1/comment', values)
+      return response.data
+    } catch(error) {
+      sendError(error)
+      return false
+    }
+  },
+  sendAnswerVideoComment: async (values) => {
+    try{
+      const response = await axiosInstance.post(api + 'api/v1/comment/answer', values)
+      return response.data
+    } catch(error) {
+      sendError(error)
+      return false
+    }
+  }
 }
 
 const videos = {

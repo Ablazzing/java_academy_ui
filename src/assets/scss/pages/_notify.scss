@@ -50,4 +50,11 @@
       }
     }
   }
+  .empty{
+    margin: 30px 0 0;
+    padding: 20px;
+    border: 1px solid var(--color-gray-dark-200);
+    background: var(--color-gray-light);
+    color: var(--color-gray-middle);
+  }
 }

@@ -39,7 +39,7 @@ const SignupPage = () => {
         resetForm()
         router.push('/signin')
       } else {
-        NotificationManager.error(messages.user.errors.undefined)
+        NotificationManager.error(messages.user.errors.registration)
       }
       setLoading(false)
     }

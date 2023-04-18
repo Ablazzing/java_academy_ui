@@ -65,7 +65,7 @@ const AdminModuleUpdatePage = () => {
   }
   const loadPageData = async () => {
     const response = await appApi().modules.getModuleAdmin({
-      slug: router.query.module
+      moduleName: router.query.module
     })
     if(response && response[0]) {
       setModule(response[0])
