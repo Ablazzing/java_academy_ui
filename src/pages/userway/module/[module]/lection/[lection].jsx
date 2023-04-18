@@ -74,7 +74,21 @@ const LectionPage = () => {
         {!error && 
           <>
             <div className="pagetitle"><h1>{ module.video?.russianName }</h1></div>
-            
+            <div className="swiperbox">
+              <Swiper navigation={ lectionSwiperConfig.navigation } modules={ lectionSwiperConfig.modules } >
+                <SwiperSlide>
+                  <iframe src={`https://www.youtube.com/embed/${module.video?.url}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                </SwiperSlide>
+              </Swiper>
+              <div className="navigation">
+                <button className="swipernav prev">
+                  <svg><use xlinkHref="/theme/sprite.svg#swiper_prev"></use></svg>
+                </button>
+                <button className="swipernav next">
+                  <svg><use xlinkHref="/theme/sprite.svg#swiper_next"></use></svg>
+                </button>
+              </div>
+            </div>
             <div className="boxshadow">
               <div className="title">Описание</div>
               <div className="desc" dangerouslySetInnerHTML={{ __html: module?.video?.description }} />
@@ -123,21 +137,3 @@ const LectionPage = () => {
 
 export default LectionPage
 
-
-/*
-<div className="swiperbox">
-              <Swiper navigation={ lectionSwiperConfig.navigation } modules={ lectionSwiperConfig.modules } >
-                <SwiperSlide>
-                  <iframe src={`https://www.youtube.com/embed/${module.video?.url}`} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
-                </SwiperSlide>
-              </Swiper>
-              <div className="navigation">
-                <button className="swipernav prev">
-                  <svg><use xlinkHref="/theme/sprite.svg#swiper_prev"></use></svg>
-                </button>
-                <button className="swipernav next">
-                  <svg><use xlinkHref="/theme/sprite.svg#swiper_next"></use></svg>
-                </button>
-              </div>
-            </div>
-*/

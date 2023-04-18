@@ -65,22 +65,20 @@ const PageModule = () => {
                     </button>
                     <Collapse isOpened={ collapse[i] }>
                       <div className="boxshadow">
-                        {module?.videosGroup?.map((e, i) => {
-                          return <ul className="items" key={ i }>
-                            {e.videos.map((video, id) => {
-                              return <li key={ id }>
-                                <Link href={`/userway/module/${ module.name }/lection/${ video.video.name }`}>
-                                  {video.isWatched && 
-                                    <svg className="module_check_round">
-                                      <use xlinkHref="/theme/sprite.svg#module_check_round"></use>
-                                    </svg>
-                                  }
-                                  { video.video.russianName }
-                                </Link>
-                              </li>
-                            })}
-                          </ul>
-                        })}
+                        <ul className="items" key={ i }>
+                          {e.videos.map((video, id) => {
+                            return <li key={ id }>
+                              <Link href={`/userway/module/${ module.name }/lection/${ video.video.name }`}>
+                                {video.isWatched && 
+                                  <svg className="module_check_round">
+                                    <use xlinkHref="/theme/sprite.svg#module_check_round"></use>
+                                  </svg>
+                                }
+                                { video.video.russianName }
+                              </Link>
+                            </li>
+                          })}
+                        </ul>
                       </div>
                     </Collapse>
                   </div>
