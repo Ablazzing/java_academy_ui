@@ -239,6 +239,28 @@ footer{
         }
       }
     }
+    .btnbox{
+      position: relative;
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 0 40px;
+      z-index: 1;
+      button{
+        font-size: 16px;
+        line-height: 16px;
+        color: var(--color-white);
+        transition: color .35s ease;
+        @media screen and (max-width: 700px) {
+          font-size: 14px;
+        }
+        @media screen and (max-width: 480px) {
+          font-size: 12px;
+        }
+        &:hover{
+          color: var(--color-red);
+        }
+      }
+    }
   }
   &.userway{
     width: 100%;
@@ -250,6 +272,7 @@ footer{
     .wrap{
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       height: 100%;
       button{
         font-size: 16px;

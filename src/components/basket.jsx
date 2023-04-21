@@ -1,12 +1,13 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { NotificationContainer, NotificationManager } from 'react-notifications'
+import { useDispatch, useSelector } from 'react-redux'
 import { setShoppingCart } from '@/store'
 import { useBasket } from './contexts/basket'
-import { useEffect } from 'react'
 
 export const Basket = () => {
 
+  const [ price, setPrice ] = useState(0)
   const shoppingCart = useSelector(state => state.app.shoppingcart)
   const dispatch = useDispatch()
   const { basket, toggleBasket } = useBasket([])
@@ -20,6 +21,11 @@ export const Basket = () => {
   }
 
   useEffect(() => {
+    let total = 0
+    shoppingCart.map(e => {
+      total += e.price
+    })
+    setPrice(total)
     if(!shoppingCart.length && basket.open) toggleBasket()
   }, [ shoppingCart ])
 
@@ -37,15 +43,15 @@ export const Basket = () => {
         {shoppingCart.map((e, i) => {
           return <div className="item" key={ i } >
             <span>{ e.russianName }</span>
-            <span>{ e.price } ₽</span>
-            {e.newPrice && <span> { e.newPrice } ₽</span>}
+            <span className={ e.newPrice ? 'new' : ''}> { e.newPrice ? e.newPrice + ' ₽' : '' }</span>
+            <span className={ e.newPrice ? 'old' : 'new'}>{ e.price } ₽</span>
             <button onClick={ () => remove(e.name) } type="button">
               <svg><use xlinkHref="/theme/sprite.svg#close"></use></svg>
             </button>
           </div>
         })}
         </div>
-        <button className="btn st4 submit" type="button">Оплатить 35 000 ₽</button>
+        <button className="btn st4 submit" type="button">Оплатить { price } ₽</button>
       </div>
       <NotificationContainer />
     </div>

@@ -7,6 +7,7 @@ import { appApi } from '@/repositories'
 import { useApp } from '@/components/contexts'
 import { useMenu } from '@/components/contexts/menu'
 import { useBasket } from '@/components/contexts/basket'
+import { mainPageContent } from '@/content'
 
 export const Header = () => {
   
@@ -50,10 +51,10 @@ export const Header = () => {
           state.section === 'index' && 
           <ul className="auth">
             <li>
-              <Link href="/signin" className="btn st1">Вход</Link>
+              <Link href="/signin" className="btn st1" dangerouslySetInnerHTML={{ __html: mainPageContent.header.signin }} />
             </li>
             <li>
-              <Link href="/signup" className="btn st1">Регистрация</Link>
+              <Link href="/signup" className="btn st1" dangerouslySetInnerHTML={{ __html: mainPageContent.header.signup }} />
             </li>
             <li>
               <button onClick={ () => toggleMenu() } className={ menu ? 'open' : '' } type="button">
